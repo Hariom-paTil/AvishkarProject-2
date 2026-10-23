@@ -20,7 +20,7 @@
   "LinkedIn": {
     "source": "LinkedIn",
     "status": "NOT_CONFIGURED",
-    "lastCheckedAt": "2026-10-23T10:31:18.803Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.852Z",
     "durationMs": 0,
     "resultCount": 0,
     "errorMessage": "Requires approved API access (LinkedIn Official Partner API). Unofficial scraping is strictly disabled.",
@@ -29,7 +29,7 @@
   "Internshala": {
     "source": "Internshala",
     "status": "NOT_CONFIGURED",
-    "lastCheckedAt": "2026-10-23T10:31:18.804Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.853Z",
     "durationMs": 0,
     "resultCount": 0,
     "errorMessage": "Requires approved API access (Internshala Partner API). Unofficial scraping is strictly disabled.",
@@ -38,34 +38,34 @@
   "Remotive": {
     "source": "Remotive",
     "status": "SUCCESS",
-    "lastCheckedAt": "2026-10-23T10:31:18.942Z",
-    "durationMs": 139,
-    "resultCount": 0,
+    "lastCheckedAt": "2026-10-23T10:31:25.988Z",
+    "durationMs": 136,
+    "resultCount": 9,
     "errorMessage": null,
     "isConfigured": true
   },
   "Ashby": {
     "source": "Ashby",
     "status": "PARTIAL",
-    "lastCheckedAt": "2026-10-23T10:31:19.381Z",
-    "durationMs": 584,
-    "resultCount": 14,
+    "lastCheckedAt": "2026-10-23T10:31:26.401Z",
+    "durationMs": 550,
+    "resultCount": 0,
     "errorMessage": "Ashby experienced errors for 1 organizations.",
     "isConfigured": true
   },
   "Greenhouse": {
     "source": "Greenhouse",
     "status": "PARTIAL",
-    "lastCheckedAt": "2026-10-23T10:31:20.320Z",
-    "durationMs": 1537,
-    "resultCount": 56,
+    "lastCheckedAt": "2026-10-23T10:31:27.248Z",
+    "durationMs": 1405,
+    "resultCount": 17,
     "errorMessage": "Greenhouse experienced errors on 1 company boards.",
     "isConfigured": true
   },
   "Lever": {
     "source": "Lever",
     "status": "ERROR",
-    "lastCheckedAt": "2026-10-23T10:31:16.802Z",
+    "lastCheckedAt": "2026-10-23T10:31:32.856Z",
     "durationMs": 7008,
     "resultCount": 0,
     "errorMessage": "Lever experienced errors for 6 companies.",

@@ -411,7 +411,7 @@
     "postedDate": "2026-10-21T18:43:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.817Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.801Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -427,12 +427,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -450,6 +450,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -484,7 +485,7 @@
     "postedDate": "2026-10-21T18:53:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.819Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.802Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -500,12 +501,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -523,6 +524,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -558,7 +560,7 @@
     "postedDate": "2026-10-22T13:17:06.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.820Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.802Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -574,12 +576,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -597,6 +599,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -631,7 +634,7 @@
     "postedDate": "2026-10-21T18:53:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.821Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.803Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -647,12 +650,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -670,6 +673,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -764,7 +768,7 @@
     "postedDate": "2026-10-21T18:53:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.826Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.807Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -780,12 +784,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -803,6 +807,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -837,7 +842,7 @@
     "postedDate": "2026-10-21T18:53:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.826Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.807Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -853,12 +858,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -876,6 +881,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -910,7 +916,7 @@
     "postedDate": "2026-10-22T13:16:14.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.826Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.808Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -926,12 +932,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -949,6 +955,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -983,7 +990,7 @@
     "postedDate": "2026-10-22T13:16:14.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.827Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.808Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -999,12 +1006,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1022,6 +1029,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1125,7 +1133,7 @@
     "postedDate": "2026-10-22T13:15:17.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.828Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.810Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1141,12 +1149,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1164,6 +1172,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1198,7 +1207,7 @@
     "postedDate": "2026-10-22T13:16:14.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.828Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.809Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1214,12 +1223,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1237,6 +1246,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1271,7 +1281,7 @@
     "postedDate": "2026-10-22T13:17:07.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.828Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.809Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1287,12 +1297,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1310,6 +1320,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1342,7 +1353,7 @@
     "postedDate": "2026-10-21T13:15:44.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T09:56:42.519Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.813Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1358,12 +1369,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T09:56:43.360Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 62,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 15,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1372,22 +1383,18 @@
       "completeness": 4,
       "sourceReliability": 3
     },
-    "matchExplanation": "Verified on the Datadog career page. General alignment with software engineering background. Matches your open workplace preference. Machine Learning is listed as a requirement but is not in your profile. Recently posted. Graduation eligibility is not specified.",
-    "matchingSkills": [
-      "javascript",
-      "python",
-      "react"
-    ],
+    "matchExplanation": "Verified on the Datadog career page. General alignment with software engineering background. Matches your open workplace preference. Machine Learning is listed as a requirement but is not in your profile. Recently posted. Graduation year not provided in user profile.",
+    "matchingSkills": [],
     "missingSkills": [
       "Machine Learning"
     ],
     "uncertainties": [
-      "Graduation eligibility is not specified.",
+      "Graduation year not provided in user profile.",
       "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
-    "whyItMatches": "Verified on the Datadog career page. General alignment with software engineering background. Matches your open workplace preference. Machine Learning is listed as a requirement but is not in your profile. Recently posted. Graduation eligibility is not specified."
+    "whyItMatches": "Verified on the Datadog career page. General alignment with software engineering background. Matches your open workplace preference. Machine Learning is listed as a requirement but is not in your profile. Recently posted. Graduation year not provided in user profile."
   },
   {
     "id": "opp-8fa160e5afe89103",
@@ -1473,7 +1480,7 @@
     "postedDate": "2026-09-29T17:18:57.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.829Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.811Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1489,12 +1496,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.615Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 60,
+    "score": 52,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1510,6 +1517,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1542,7 +1550,7 @@
     "postedDate": "2026-09-29T17:18:57.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.846Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.814Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1558,12 +1566,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.615Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 60,
+    "score": 52,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1579,6 +1587,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1611,7 +1620,7 @@
     "postedDate": "2026-09-29T17:18:57.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.846Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.814Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1627,12 +1636,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.589Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 60,
+    "score": 52,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1648,6 +1657,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1680,7 +1690,7 @@
     "postedDate": "2026-09-30T18:31:55.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.847Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.814Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1696,12 +1706,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.589Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 60,
+    "score": 52,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1717,6 +1727,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1747,7 +1758,7 @@
     "postedDate": "2026-09-29T18:05:42.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.830Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.811Z",
     "completenessScore": 80,
     "mergedSources": [
       "Greenhouse"
@@ -1763,12 +1774,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.585Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 59,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1782,6 +1793,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1812,7 +1824,7 @@
     "postedDate": "2026-09-29T17:18:57.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.831Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.812Z",
     "completenessScore": 80,
     "mergedSources": [
       "Greenhouse"
@@ -1828,12 +1840,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.615Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 59,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1847,6 +1859,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1877,7 +1890,7 @@
     "postedDate": "2026-09-29T17:18:57.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.844Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.812Z",
     "completenessScore": 80,
     "mergedSources": [
       "Greenhouse"
@@ -1893,12 +1906,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.585Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 59,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1912,6 +1925,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -1948,7 +1962,7 @@
     "postedDate": "2026-09-14T17:36:24.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.851Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.818Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -1964,12 +1978,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 58,
+    "score": 50,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -1987,6 +2001,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2023,7 +2038,7 @@
     "postedDate": "2026-09-17T23:16:13.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.851Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.819Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2039,12 +2054,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 58,
+    "score": 50,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2062,6 +2077,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2212,7 +2228,7 @@
     "postedDate": "2026-10-22T13:17:11.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.829Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.810Z",
     "completenessScore": 80,
     "mergedSources": [
       "Greenhouse"
@@ -2228,12 +2244,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:18.700Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 54,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 8,
+      "roleRelevance": 5,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2247,6 +2263,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2284,7 +2301,7 @@
     "postedDate": "2026-10-21T18:43:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.855Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.822Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2300,12 +2317,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2323,6 +2340,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2355,7 +2373,7 @@
     "postedDate": "2026-10-22T19:17:18.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.854Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.821Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2371,12 +2389,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.535Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2392,6 +2410,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2424,7 +2443,7 @@
     "postedDate": "2026-10-22T19:18:02.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.854Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.822Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2440,12 +2459,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.525Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2461,6 +2480,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2491,7 +2511,7 @@
     "postedDate": "2026-09-24T00:40:15.975Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.805Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.797Z",
     "completenessScore": 70,
     "mergedSources": [
       "Ashby"
@@ -2507,12 +2527,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.289Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 59,
+    "score": 61,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 20,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2526,6 +2546,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2556,7 +2577,7 @@
     "postedDate": "2026-09-24T00:55:33.807Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.806Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.797Z",
     "completenessScore": 70,
     "mergedSources": [
       "Ashby"
@@ -2572,12 +2593,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.517Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 59,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2591,6 +2612,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2621,7 +2643,7 @@
     "postedDate": "2026-09-24T01:01:49.394Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.806Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.797Z",
     "completenessScore": 70,
     "mergedSources": [
       "Ashby"
@@ -2637,12 +2659,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.293Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 59,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2656,6 +2678,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2754,7 +2777,7 @@
     "postedDate": "2026-09-23T19:30:27.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.848Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.816Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2770,12 +2793,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 60,
+    "score": 52,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -2792,6 +2815,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -2826,7 +2850,7 @@
     "postedDate": "2026-10-22T13:17:10.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T09:56:42.511Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.806Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2842,13 +2866,13 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T09:56:44.210Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 55,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 0,
-      "requiredSkills": 8,
+      "roleRelevance": 10,
+      "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
       "eligibility": 10,
@@ -2856,21 +2880,20 @@
       "completeness": 4,
       "sourceReliability": 3
     },
-    "matchExplanation": "Verified on the Stripe career page. Matches your Python skills. Matches your open workplace preference. Spring Boot is listed as a requirement but is not in your profile. Recently posted. Graduation eligibility is not specified.",
-    "matchingSkills": [
-      "Python"
-    ],
+    "matchExplanation": "Verified on the Stripe career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Recently posted. Graduation year not provided in user profile.",
+    "matchingSkills": [],
     "missingSkills": [
+      "Python",
       "Spring Boot",
       "Machine Learning"
     ],
     "uncertainties": [
-      "Graduation eligibility is not specified.",
+      "Graduation year not provided in user profile.",
       "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
-    "whyItMatches": "Verified on the Stripe career page. Matches your Python skills. Matches your open workplace preference. Spring Boot is listed as a requirement but is not in your profile. Recently posted. Graduation eligibility is not specified."
+    "whyItMatches": "Verified on the Stripe career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Recently posted. Graduation year not provided in user profile."
   },
   {
     "id": "opp-f8b5428e4b5ffb72",
@@ -2901,7 +2924,7 @@
     "postedDate": "2026-10-22T13:15:17.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T09:56:42.511Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.806Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2917,13 +2940,13 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T09:56:44.327Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 55,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 0,
-      "requiredSkills": 8,
+      "roleRelevance": 10,
+      "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
       "eligibility": 10,
@@ -2931,21 +2954,20 @@
       "completeness": 4,
       "sourceReliability": 3
     },
-    "matchExplanation": "Verified on the Stripe career page. Matches your Python skills. Matches your open workplace preference. Spring Boot is listed as a requirement but is not in your profile. Recently posted. Graduation eligibility is not specified.",
-    "matchingSkills": [
-      "Python"
-    ],
+    "matchExplanation": "Verified on the Stripe career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Recently posted. Graduation year not provided in user profile.",
+    "matchingSkills": [],
     "missingSkills": [
+      "Python",
       "Spring Boot",
       "Machine Learning"
     ],
     "uncertainties": [
-      "Graduation eligibility is not specified.",
+      "Graduation year not provided in user profile.",
       "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
-    "whyItMatches": "Verified on the Stripe career page. Matches your Python skills. Matches your open workplace preference. Spring Boot is listed as a requirement but is not in your profile. Recently posted. Graduation eligibility is not specified."
+    "whyItMatches": "Verified on the Stripe career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Recently posted. Graduation year not provided in user profile."
   },
   {
     "id": "opp-efafe143a15fa2d9",
@@ -2974,7 +2996,7 @@
     "postedDate": "2026-09-14T17:36:15.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.851Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.818Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -2990,12 +3012,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:17.926Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 58,
+    "score": 50,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -3011,6 +3033,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -3044,7 +3067,7 @@
     "postedDate": "2026-09-15T17:00:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.849Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.816Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -3060,12 +3083,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:16.873Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 58,
+    "score": 50,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -3082,6 +3105,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -3112,7 +3136,7 @@
     "postedDate": "2026-10-21T18:53:01.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.829Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.810Z",
     "completenessScore": 80,
     "mergedSources": [
       "Greenhouse"
@@ -3128,12 +3152,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:18.679Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 54,
+    "score": 51,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 8,
+      "roleRelevance": 5,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -3147,6 +3171,7 @@
     "missingSkills": [],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -3181,7 +3206,7 @@
     "postedDate": "2026-09-22T20:22:34.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T09:56:42.523Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.817Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -3197,13 +3222,13 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T09:56:43.714Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 50,
+    "score": 52,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 0,
-      "requiredSkills": 8,
+      "roleRelevance": 10,
+      "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
       "eligibility": 10,
@@ -3211,21 +3236,20 @@
       "completeness": 4,
       "sourceReliability": 3
     },
-    "matchExplanation": "Verified on the Figma career page. Matches your Python skills. Matches your open workplace preference. Go is listed as a requirement but is not in your profile. Graduation eligibility is not specified.",
-    "matchingSkills": [
-      "Python"
-    ],
+    "matchExplanation": "Verified on the Figma career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Graduation year not provided in user profile.",
+    "matchingSkills": [],
     "missingSkills": [
+      "Python",
       "Go",
       "Machine Learning"
     ],
     "uncertainties": [
-      "Graduation eligibility is not specified.",
+      "Graduation year not provided in user profile.",
       "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
-    "whyItMatches": "Verified on the Figma career page. Matches your Python skills. Matches your open workplace preference. Go is listed as a requirement but is not in your profile. Graduation eligibility is not specified."
+    "whyItMatches": "Verified on the Figma career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Graduation year not provided in user profile."
   },
   {
     "id": "opp-b2769684013ae6ad",
@@ -3258,27 +3282,28 @@
     "postedDate": "2026-10-05T19:17:42.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T09:54:16.610Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.817Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
     ],
     "contentHash": "0fae45b15e6a66525a968fb791e88641",
     "category": "AI & Machine Learning",
-    "verificationStatus": "Needs confirmation",
-    "isVerified": false,
+    "verificationStatus": "Verified",
+    "isVerified": true,
     "verificationDetails": [
       "Verified student/internship role classification.",
       "Live application URL verified reachable.",
       "Direct company career system verified on Greenhouse.",
-      "Important terms (deadline or compensation) were not specified by source."
+      "Verified active listing on official company ATS portal.",
+      "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T09:54:17.518Z",
-    "qualityTier": "needsConfirmation",
-    "score": 36,
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
+    "qualityTier": "otherRelevant",
+    "score": 52,
     "scoreBreakdown": {
-      "verification": 2,
-      "roleRelevance": 0,
+      "verification": 10,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -3287,22 +3312,20 @@
       "completeness": 4,
       "sourceReliability": 3
     },
-    "matchExplanation": "Discovered on Greenhouse; key details need confirmation. Matches your Python skills. Matches your open workplace preference. Go is listed as a requirement but is not in your profile. Graduation eligibility is not specified.",
-    "matchingSkills": [
-      "Python"
-    ],
+    "matchExplanation": "Verified on the Figma career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Graduation year not provided in user profile.",
+    "matchingSkills": [],
     "missingSkills": [
+      "Python",
       "Go",
-      "Git",
-      "Machine Learning"
+      "Git"
     ],
     "uncertainties": [
-      "Graduation eligibility is not specified.",
+      "Graduation year not provided in user profile.",
       "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
-    "whyItMatches": "Discovered on Greenhouse; key details need confirmation. Matches your Python skills. Matches your open workplace preference. Go is listed as a requirement but is not in your profile. Graduation eligibility is not specified."
+    "whyItMatches": "Verified on the Figma career page. General alignment with software engineering background. Matches your open workplace preference. Python is listed as a requirement but is not in your profile. Graduation year not provided in user profile."
   },
   {
     "id": "opp-79493dc314b3e34b",
@@ -6580,7 +6603,7 @@
     "postedDate": "2026-10-22T13:17:10.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.818Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.801Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -6596,12 +6619,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:18.691Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -6617,6 +6640,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -6649,7 +6673,7 @@
     "postedDate": "2026-10-22T13:15:17.000Z",
     "stipend": "Unpaid / Not disclosed",
     "status": "active",
-    "lastCheckedAt": "2026-10-23T10:31:16.819Z",
+    "lastCheckedAt": "2026-10-23T10:31:25.801Z",
     "completenessScore": 95,
     "mergedSources": [
       "Greenhouse"
@@ -6665,12 +6689,12 @@
       "Verified active listing on official company ATS portal.",
       "Rolling admissions / open until filled."
     ],
-    "verifiedAt": "2026-10-23T10:31:18.676Z",
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
     "qualityTier": "otherRelevant",
-    "score": 65,
+    "score": 57,
     "scoreBreakdown": {
       "verification": 10,
-      "roleRelevance": 18,
+      "roleRelevance": 10,
       "requiredSkills": 0,
       "preferredSkills": 5,
       "locationRemote": 10,
@@ -6686,6 +6710,7 @@
     ],
     "uncertainties": [
       "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
       "Work authorization requirements are not specified."
     ],
     "eligibilityScore": 10,
@@ -6820,5 +6845,79 @@
     ],
     "eligibilityScore": 10,
     "whyItMatches": "Verified on the Ramp career page. General alignment with software engineering background. Matches your open workplace preference. Graduation year not provided in user profile."
+  },
+  {
+    "id": "opp-e563a4871eec046d",
+    "source": "Greenhouse",
+    "sourceListingUrl": "https://boards.greenhouse.io/figma/jobs/6219995004?gh_jid=6219995004",
+    "canonicalUrl": "https://boards.greenhouse.io/figma/jobs/6219995004?gh_jid=6219995004",
+    "directApplyUrl": "https://boards.greenhouse.io/figma/jobs/6219995004?gh_jid=6219995004",
+    "externalId": "6219995004",
+    "title": "PhD Intern, Software Engineer - Graphics (2027)",
+    "company": "Figma",
+    "companyWebsite": "https://figma.com",
+    "description": "Figma is growing our team of passionate creatives and builders on a mission to make design accessible to all. Figma’s platform helps teams bring ideas to life—whether you're brainstorming, creating a prototype, translating designs into code, or iterating with AI. From idea to product, Figma empowers teams to streamline workflows, move faster, and work together in real time from anywhere in the world. If you're excited to shape the future of design and collaboration, join us!\n The Rendering & Animation team (R&A) builds the graphics engine which renders the canvas for all Figma applications. Our mission is to make rendering performant, feature-rich, reliable, maintainable and extendible across all products & surfaces. The team plays a core, bedrock role for the company because it underpins the technology driving the user experience, touching many other teams, and as such is one of the most impactful areas of Figma.\n\n The R&A team is devoted to hiring individuals with graphics expertise. We are interested in a variety of sub-domains, including 2D GPU-driven rendering, computational geometry & vector graphics, animation frameworks, anti-aliasing algorithms, shader effects, and more recently branching into video/image processing. A PhD Intern specializing in any of these areas would be a phenomenal fit for the team with a lot of exciting projects available.\n\n As an intern on our team, you'll take ownership of a high-impact project at the intersection of your technical strengths and our most pressing graphics, rendering, or media challenges. You'll work closely with your intern manager, team leads, and collaborators across 1–2 partner teams to deliver tangible results within your internship. This is an opportunity to do significant, portfolio-worthy work that directly supplies Figma's visual platform.\n\n This is a 12 or 16-week internship role that can be held from one of our US hubs (San Francisco or New York) starting in May or June of 2027.\n\n What you'll do at Figma: \n \n Learn from industry graphics engineers and participate as an embedded team member of the Rendering & Animation team\n\n Collaborate with engineers, PMs, designers, and researchers to scope and execute your work\n\n Develop, validate, and document solutions from prototypes to production-ready systems\n\n Drive projects that apply research insights to meaningful product challenges\n\n Contribute to exciting domain areas; some examples: crafting and optimizing shaders for sophisticated effects, investigating improvements to anti-aliasing algorithms, improving media processing capabilities, animating spline interpolation, and more!\n\n We'd love to hear from you if you have: \n \n Current enrollment as a 4th or 5th year senior PhD student pursuing a PhD in Computer Graphics, Media Processing, or a related field\n\n Experience working with OpenGL, WebGL, WebGPU, Vulkan or Metal and their respective shader languages (GLSL, WGSL) or other low-level graphics APIs\n\n Proficiency in either C++ or Rust\n\n A track record of rigorous problem-solving through academic or applied research, with experience thinking holistically about use cases and the low-level technology required\n\n While it's not required, it's an added plus if you also have: \n \n Demonstrated expertise in computer graphics, supported by publications at conferences such as SIGGRAPH, Eurographics, High Performance Graphics, NVIDIA GTC, or Pacific Graphics\n\n Proficiency in WebAssembly, web graphics, 2D graphics, performance optimization, animation, geometry, or media\n\n Interest in art and design applications\n\n Experience using AI tools (e.g., GitHub Copilot, ChatGPT, Claude) to write, debug, and optimize code\n\n Related industry experience via a past internship or full-time role\n\n Strong communication and interpersonal skills, with demonstrated experience collaborating across functions\n\n At Figma, one of our values is Grow as you go. We believe in hiring smart, curious people who are excited to learn and develop their skills. If you’re excited about this role but your past experience doesn’t align perfectly with the points outlined in the job description, we encourage you to apply anyways. You may be just the right candidate for this or other roles.\n Pay Transparency Disclosure \n\n This internship role is based in either Figma’s San Francisco or New York hub offices, and has the hourly base pay rate stated below. Figma also offers interns a housing stipend and travel reimbursement. Figma’s compensation and benefits are subject to change and may be modified in the future.\n Internship $74 — $74 USD At Figma we celebrate and support our differences. We know employing a team rich in diverse thoughts, experiences, and opinions allows our employees, our product and our community to flourish. Figma is an equal opportunity workplace - we are dedicated to equal employment opportunities regardless of race, color, ancestry, religion, sex, national origin, sexual orientation, age, citizenship, marital status, disability, gender identity/expression, veteran status , or any other characteristic protected by law. We also consider qualified applicants regardless of criminal histories, consistent with legal requirements.\n\n We will work to ensure individuals with disabilities are provided reasonable accommodation to apply for a role, participate in the interview process, perform essential job functions, and receive other benefits and privileges of employment. If you require accommodation, please reach out to accommodations-ext@figma.com . These modifications enable an individual with a disability to have an equal opportunity not only to get a job, but successfully perform their job tasks to the same extent as people without disabilities. \n\n Examples of accommodations include but are not limited to: \n\n Holding interviews in an accessible location\n\n Enabling closed captioning on video conferencing\n\n Ensuring all written communication be compatible with screen readers\n\n Changing the mode or format of interviews \n\n To ensure the integrity of our hiring process and facilitate a more personal connection, we require all candidates keep their cameras on during video interviews. Additionally, if hired you will be required to attend in person onboarding.\n\n By applying for this job, the candidate acknowledges and agrees that any personal data contained in their application or supporting materials will be processed in accordance with Figma's Candidate Privacy Notice .\n\n Application limits: To help candidates focus on the opportunities most relevant to their skills and experience, Figma limits the number and frequency of applications. These limits apply to all roles:\n\n Candidates may submit up to 5 applications during any rolling 30-day period.\n\n Candidates may not reapply to the same role while an application is active or within 90 days of receiving a rejection.\n\n Once the applicable days has passed, candidates are welcome to apply again.",
+    "responsibilities": [],
+    "qualifications": [],
+    "requiredSkills": [
+      "Go",
+      "Rust",
+      "Git"
+    ],
+    "preferredSkills": [],
+    "location": "San Francisco, CA • New York, NY",
+    "city": "San Francisco",
+    "country": "NY",
+    "workMode": "onsite",
+    "duration": "Duration not specified",
+    "startDate": "Flexible / Not specified",
+    "deadline": "Open until filled",
+    "postedDate": "2026-10-13T16:17:57.000Z",
+    "stipend": "Unpaid / Not disclosed",
+    "status": "active",
+    "lastCheckedAt": "2026-10-23T10:31:25.818Z",
+    "completenessScore": 95,
+    "mergedSources": [
+      "Greenhouse"
+    ],
+    "contentHash": "ab12288c63421fcb94b52d66e07e7971",
+    "category": "Software Engineering",
+    "verificationStatus": "Verified",
+    "isVerified": true,
+    "verificationDetails": [
+      "Verified student/internship role classification.",
+      "Live application URL verified reachable.",
+      "Direct company career system verified on Greenhouse.",
+      "Verified active listing on official company ATS portal.",
+      "Rolling admissions / open until filled."
+    ],
+    "verifiedAt": "2026-10-23T10:31:25.827Z",
+    "qualityTier": "otherRelevant",
+    "score": 54,
+    "scoreBreakdown": {
+      "verification": 10,
+      "roleRelevance": 10,
+      "requiredSkills": 0,
+      "preferredSkills": 5,
+      "locationRemote": 10,
+      "eligibility": 10,
+      "recency": 5,
+      "completeness": 4,
+      "sourceReliability": 3
+    },
+    "matchExplanation": "Verified on the Figma career page. General alignment with software engineering background. Matches your open workplace preference. Go is listed as a requirement but is not in your profile. Graduation year not provided in user profile.",
+    "matchingSkills": [],
+    "missingSkills": [
+      "Go",
+      "Rust",
+      "Git"
+    ],
+    "uncertainties": [
+      "Graduation year not provided in user profile.",
+      "Degree requirements were not listed.",
+      "Work authorization requirements are not specified."
+    ],
+    "eligibilityScore": 10,
+    "whyItMatches": "Verified on the Figma career page. General alignment with software engineering background. Matches your open workplace preference. Go is listed as a requirement but is not in your profile. Graduation year not provided in user profile."
   }
 ]
