@@ -24,7 +24,7 @@ async function testType(type, sampleProfile) {
     if (url === '/api/session') {
       return { ok: true, json: async () => ({ ok: true, email: 'admin123@gmail.com' }) };
     }
-    return { ok: false, status: 502 };
+    return { ok: false, status: 502, json: async () => ({ ok: false, error: "Offline mock" }) };
   };
 
   dom.window.eval(scriptJs);

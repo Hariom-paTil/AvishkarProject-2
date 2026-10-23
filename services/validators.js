@@ -38,15 +38,26 @@ function validateInternshipRequest(body) {
   const errors = [];
   const data = {};
 
+  if (!body || typeof body !== "object") {
+    return { valid: false, errors: ["Invalid request body."], data: {} };
+  }
+
   data.type = (body.type === "job") ? "job" : "internship";
   data.education = sanitizeString(body.education, 200);
   data.skills = normalizeSkills(body.skills);
   data.goal = sanitizeString(body.goal, 500);
   data.workplace = ["Remote", "Hybrid", "On-site", "Any"].includes(body.workplace) ? body.workplace : "Any";
   data.batch = sanitizeString(body.batch, 100) || "Current Student";
+  data.graduationYear = sanitizeString(body.graduationYear, 20);
+  data.location = sanitizeString(body.location, 200);
+  data.workAuthorization = sanitizeString(body.workAuthorization, 200);
+  data.minStipend = typeof body.minStipend === "number" ? body.minStipend : 0;
+  data.page = Math.max(1, parseInt(body.page || 1, 10));
+  data.pageSize = Math.max(1, Math.min(50, parseInt(body.pageSize || 24, 10)));
+  data.forceLive = Boolean(body.forceLive);
 
-  if (data.skills.length === 0 && !data.education) {
-    errors.push("Please provide at least your skills or education.");
+  if (data.skills.length === 0 && !data.education && !data.goal) {
+    errors.push("Please provide at least your skills, target goal, or education.");
   }
 
   return { valid: errors.length === 0, errors, data };

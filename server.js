@@ -259,6 +259,63 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    // Get source health and status
+    if (req.method === "GET" && pathname === "/api/internships/sources") {
+      try {
+        const statuses = internshipService.getSourceStatuses();
+        sendJson(res, 200, { ok: true, success: true, data: statuses });
+      } catch (err) {
+        sendJson(res, 500, { ok: false, success: false, error: "Failed to fetch source statuses." });
+      }
+      return;
+    }
+
+    // Bookmark / Save internship
+    if (req.method === "POST" && pathname === "/api/internships/save") {
+      const body = await readBody(req);
+      const listingId = String(body.listingId || "").trim();
+      if (!listingId) {
+        sendJson(res, 400, { ok: false, success: false, error: "listingId is required." });
+        return;
+      }
+      try {
+        const result = internshipService.toggleSaveInternship(session ? session.email : "guest", listingId);
+        sendJson(res, 200, { ok: true, success: true, saved: result.saved, listingId });
+      } catch (err) {
+        sendJson(res, 500, { ok: false, success: false, error: "Failed to save internship." });
+      }
+      return;
+    }
+
+    // Get all saved internships
+    if (req.method === "GET" && pathname === "/api/internships/saved") {
+      try {
+        const saved = internshipService.getSavedInternships(session ? session.email : "guest");
+        sendJson(res, 200, { ok: true, success: true, data: saved });
+      } catch (err) {
+        sendJson(res, 500, { ok: false, success: false, error: "Failed to fetch saved internships." });
+      }
+      return;
+    }
+
+    // Get listing detail by ID
+    if ((req.method === "GET" || req.method === "POST") && pathname === "/api/internships/detail") {
+      const id = req.method === "GET"
+        ? (url.searchParams.get("id") || "")
+        : (await readBody(req)).id || "";
+      if (!id) {
+        sendJson(res, 400, { ok: false, success: false, error: "Missing listing ID." });
+        return;
+      }
+      const listing = internshipService.getListingById(id);
+      if (!listing) {
+        sendJson(res, 404, { ok: false, success: false, error: "Listing not found." });
+        return;
+      }
+      sendJson(res, 200, { ok: true, success: true, data: listing });
+      return;
+    }
+
     // ==================== FEATURE 1B: RESUME PARSER SERVICE ====================
     if (req.method === "POST" && pathname === "/api/resume/parse") {
       const body = await readBody(req);

@@ -154,7 +154,9 @@ const opportunitySearchService = {
       skills: profile.skills || '',
       goal: profile.goal || '',
       workplace: profile.workplace || 'Any',
-      batch: profile.batch || 'Current Student'
+      batch: profile.batch || 'Current Student',
+      graduationYear: profile.graduationYear || '',
+      location: profile.location || ''
     };
 
     try {
@@ -172,28 +174,293 @@ const opportunitySearchService = {
 
       const resData = await response.json();
       if (resData.ok && resData.data && Array.isArray(resData.data.opportunities)) {
-        return { data: resData.data.opportunities, summary: resData.data.searchSummary, fallback: false };
+        return {
+          data: resData.data.opportunities,
+          summary: resData.data.searchSummary,
+          sourceStatuses: resData.data.sourceStatuses || {},
+          searchDurationMs: resData.data.searchDurationMs || 0,
+          isCached: Boolean(resData.data.isCached),
+          cachedAt: resData.data.cachedAt || null,
+          totalCount: resData.data.totalCount || resData.data.opportunities.length,
+          fallback: false
+        };
       }
     } catch (error) {
       console.error('Internship search API request failed:', error);
     }
 
-    return { data: [], fallback: true };
+    return { data: [], fallback: true, sourceStatuses: {}, searchDurationMs: 0 };
   }
 };
 
 let currentAllOpportunities = [];
-let currentFilterPlatform = 'all';
+let currentFilteredOpportunities = [];
+let currentSourceStatuses = {};
+let currentSearchQuery = '';
+let currentWorkModeFilter = 'all';
+let currentSourceFilter = 'all';
+let currentFreshnessFilter = 'all';
+let currentSortOrder = 'best_match';
+
+// Local storage saved bookmarks cache
+let savedListingIds = new Set();
+try {
+  const savedArr = JSON.parse(localStorage.getItem('sb_saved_listings') || '[]');
+  savedListingIds = new Set(savedArr);
+} catch (_) {}
 
 /**
- * Filter rendered opportunities by platform (All, LinkedIn, Internshala, Remotive)
- * @param {string} platform
+ * Handle bookmark toggle
  */
-function filterOpportunitiesByPlatform(platform) {
-  currentFilterPlatform = platform;
+async function toggleSaveOpportunity(id, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  const isSaved = savedListingIds.has(id);
+  if (isSaved) {
+    savedListingIds.delete(id);
+  } else {
+    savedListingIds.add(id);
+  }
+  localStorage.setItem('sb_saved_listings', JSON.stringify(Array.from(savedListingIds)));
+
+  // Update backend
+  try {
+    fetch('/api/internships/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ listingId: id })
+    }).catch(() => {});
+  } catch (_) {}
+
+  // Update button appearance
+  const btns = document.querySelectorAll(`[data-save-id="${id}"]`);
+  btns.forEach(btn => {
+    if (savedListingIds.has(id)) {
+      btn.className = "w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center transition-all shadow-sm";
+      btn.innerHTML = '<i class="fa-solid fa-bookmark text-xs"></i>';
+      btn.title = "Remove from saved";
+    } else {
+      btn.className = "w-8 h-8 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-700 border border-slate-200 flex items-center justify-center transition-all";
+      btn.innerHTML = '<i class="fa-regular fa-bookmark text-xs"></i>';
+      btn.title = "Save opportunity";
+    }
+  });
+
+  // If source filter is 'saved', re-filter
+  if (currentSourceFilter === 'saved') {
+    applyAllOpportunityFilters();
+  }
+}
+window.toggleSaveOpportunity = toggleSaveOpportunity;
+
+/**
+ * Live search input in toolbar
+ */
+function handleOpportunitySearchInput(val) {
+  currentSearchQuery = (val || '').trim().toLowerCase();
+  applyAllOpportunityFilters();
+}
+window.handleOpportunitySearchInput = handleOpportunitySearchInput;
+
+/**
+ * Reset all opportunity filters
+ */
+function resetOpportunityFilters() {
+  currentSearchQuery = '';
+  currentWorkModeFilter = 'all';
+  currentSourceFilter = 'all';
+  currentFreshnessFilter = 'all';
+  currentSortOrder = 'best_match';
+
+  const sInput = document.getElementById('filter-search-input');
+  if (sInput) sInput.value = '';
+  const wmSelect = document.getElementById('filter-work-mode');
+  if (wmSelect) wmSelect.value = 'all';
+  const srcSelect = document.getElementById('filter-source');
+  if (srcSelect) srcSelect.value = 'all';
+  const freshSelect = document.getElementById('filter-freshness');
+  if (freshSelect) freshSelect.value = 'all';
+  const sortSelect = document.getElementById('sort-order');
+  if (sortSelect) sortSelect.value = 'best_match';
+
+  applyAllOpportunityFilters();
+}
+window.resetOpportunityFilters = resetOpportunityFilters;
+
+/**
+ * Filter and sort opportunities
+ */
+function applyAllOpportunityFilters() {
+  const wmSelect = document.getElementById('filter-work-mode');
+  const srcSelect = document.getElementById('filter-source');
+  const freshSelect = document.getElementById('filter-freshness');
+  const sortSelect = document.getElementById('sort-order');
+
+  if (wmSelect) currentWorkModeFilter = wmSelect.value;
+  if (srcSelect) currentSourceFilter = srcSelect.value;
+  if (freshSelect) currentFreshnessFilter = freshSelect.value;
+  if (sortSelect) currentSortOrder = sortSelect.value;
+
+  let filtered = [...currentAllOpportunities];
+
+  // 1. Text Search Query Filter
+  if (currentSearchQuery) {
+    filtered = filtered.filter(item => {
+      const title = (item.title || '').toLowerCase();
+      const comp = (item.company || '').toLowerCase();
+      const skills = (item.matchingSkills || []).join(' ').toLowerCase();
+      const loc = (item.location || '').toLowerCase();
+      return title.includes(currentSearchQuery) ||
+             comp.includes(currentSearchQuery) ||
+             skills.includes(currentSearchQuery) ||
+             loc.includes(currentSearchQuery);
+    });
+  }
+
+  // 2. Work Mode Filter
+  if (currentWorkModeFilter !== 'all') {
+    filtered = filtered.filter(item => {
+      const mode = (item.workMode || '').toLowerCase();
+      return mode === currentWorkModeFilter.toLowerCase();
+    });
+  }
+
+  // 3. Source Filter
+  if (currentSourceFilter === 'saved') {
+    filtered = filtered.filter(item => savedListingIds.has(item.id));
+  } else if (currentSourceFilter !== 'all') {
+    filtered = filtered.filter(item => {
+      const src = (item.source || '').toLowerCase();
+      return src.includes(currentSourceFilter.toLowerCase());
+    });
+  }
+
+  // 4. Freshness Filter (days)
+  if (currentFreshnessFilter !== 'all') {
+    const maxDays = parseInt(currentFreshnessFilter, 10);
+    const cutoffMs = Date.now() - (maxDays * 24 * 60 * 60 * 1000);
+    filtered = filtered.filter(item => {
+      if (!item.postedDate) return false;
+      const t = new Date(item.postedDate).getTime();
+      return !isNaN(t) && t >= cutoffMs;
+    });
+  }
+
+  // 5. Sorting
+  if (currentSortOrder === 'newest') {
+    filtered.sort((a, b) => {
+      const tA = a.postedDate ? new Date(a.postedDate).getTime() : 0;
+      const tB = b.postedDate ? new Date(b.postedDate).getTime() : 0;
+      return tB - tA;
+    });
+  } else if (currentSortOrder === 'completeness') {
+    filtered.sort((a, b) => (b.completenessScore || 0) - (a.completenessScore || 0));
+  } else {
+    // best_match (default)
+    filtered.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
+  }
+
+  currentFilteredOpportunities = filtered;
+
+  // Update UI stats
+  const countBadge = document.getElementById('results-count-badge');
+  const feedbackText = document.getElementById('filter-feedback-text');
+  const resetBtn = document.getElementById('reset-filters-btn');
+
+  const isFiltered = currentSearchQuery || currentWorkModeFilter !== 'all' || currentSourceFilter !== 'all' || currentFreshnessFilter !== 'all';
+  if (resetBtn) {
+    if (isFiltered) resetBtn.classList.remove('hidden');
+    else resetBtn.classList.add('hidden');
+  }
+
+  if (countBadge) {
+    countBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'Role' : 'Roles'} Available`;
+  }
+  if (feedbackText) {
+    feedbackText.textContent = isFiltered
+      ? `Filtered from ${currentAllOpportunities.length} total openings`
+      : `Ranked by multi-factor profile fit`;
+  }
+
   renderOpportunitiesList();
 }
-window.filterOpportunitiesByPlatform = filterOpportunitiesByPlatform;
+window.applyAllOpportunityFilters = applyAllOpportunityFilters;
+
+/**
+ * Render the source status banner
+ */
+function renderSourceStatusBar(statuses = {}, durationMs = 0, isCached = false, cachedAt = null) {
+  const timingBadge = document.getElementById('search-timing-badge');
+  const cacheBadge = document.getElementById('cache-indicator-badge');
+  const container = document.getElementById('source-badges-container');
+
+  if (timingBadge) {
+    timingBadge.textContent = isCached ? 'Cached Result' : `Verified in ${durationMs}ms`;
+  }
+  if (cacheBadge) {
+    if (isCached) {
+      cacheBadge.classList.remove('hidden');
+      cacheBadge.title = cachedAt ? `Fetched on ${new Date(cachedAt).toLocaleTimeString()}` : 'Cached response';
+    } else {
+      cacheBadge.classList.add('hidden');
+    }
+  }
+
+  if (!container) return;
+
+  const sourcesList = [
+    { key: 'Greenhouse', label: 'Greenhouse Public Boards', icon: 'fa-solid fa-seedling' },
+    { key: 'Lever', label: 'Lever Public Postings', icon: 'fa-solid fa-building' },
+    { key: 'Ashby', label: 'Ashby Public Boards', icon: 'fa-solid fa-cube' },
+    { key: 'Remotive', label: 'Remotive Remote API', icon: 'fa-solid fa-laptop-code' },
+    { key: 'LinkedIn', label: 'LinkedIn Partner API', icon: 'fa-brands fa-linkedin' },
+    { key: 'Internshala', label: 'Internshala Partner API', icon: 'fa-solid fa-graduation-cap' }
+  ];
+
+  container.innerHTML = sourcesList.map(src => {
+    const info = statuses[src.key] || {};
+    const status = info.status || (info.isConfigured === false ? 'NOT_CONFIGURED' : 'READY');
+
+    let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+    let statusText = 'Checking...';
+    let iconClass = 'fa-solid fa-circle-check text-emerald-500';
+
+    if (status === 'SUCCESS') {
+      badgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+      statusText = `${info.resultCount || 0} listings (${info.durationMs || 0}ms)`;
+      iconClass = 'fa-solid fa-circle-check text-emerald-600';
+    } else if (status === 'PARTIAL') {
+      badgeClass = 'bg-teal-50 text-teal-800 border-teal-200';
+      statusText = `${info.resultCount || 0} listings (Partial)`;
+      iconClass = 'fa-solid fa-circle-check text-teal-600';
+    } else if (status === 'NOT_CONFIGURED') {
+      badgeClass = 'bg-amber-50/70 text-amber-800 border-amber-200/80';
+      statusText = 'Requires Approved API Access';
+      iconClass = 'fa-solid fa-lock text-amber-600';
+    } else if (status === 'TIMEOUT') {
+      badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+      statusText = 'Timeout (>7s)';
+      iconClass = 'fa-regular fa-clock text-rose-500';
+    } else if (status === 'ERROR') {
+      badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+      statusText = 'Source Error';
+      iconClass = 'fa-solid fa-triangle-exclamation text-rose-500';
+    }
+
+    return `
+      <div class="px-2.5 py-1 rounded-xl border text-[11px] font-semibold flex items-center gap-1.5 ${badgeClass}" title="${info.errorMessage || statusText}">
+        <i class="${src.icon}"></i>
+        <span class="font-bold">${src.key}:</span>
+        <span>${statusText}</span>
+        <i class="${iconClass} text-[10px]"></i>
+      </div>
+    `;
+  }).join('');
+}
 
 /**
  * Render the filtered subset of opportunities
@@ -202,100 +469,193 @@ function renderOpportunitiesList() {
   const container = document.getElementById('internship-cards-grid');
   if (!container) return;
 
-  const filtered = currentFilterPlatform === 'all'
-    ? currentAllOpportunities
-    : currentAllOpportunities.filter(item => (item.source || '').toLowerCase() === currentFilterPlatform.toLowerCase());
+  const list = currentFilteredOpportunities;
 
-  if (filtered.length === 0) {
+  if (list.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-500">
-        <p class="text-sm font-semibold text-slate-800">No openings found for filter "${currentFilterPlatform}".</p>
-        <button onclick="filterOpportunitiesByPlatform('all')" class="mt-3 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-lg hover:bg-black transition-colors">
-          View All Opportunities (${currentAllOpportunities.length})
+      <div class="col-span-full bg-white border border-slate-200 rounded-3xl p-10 text-center shadow-sm">
+        <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3 text-xl">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-800">No matching roles found</h3>
+        <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+          We couldn't find active listings matching your current filter set. Try broadening workplace preference or resetting filters.
+        </p>
+        <button
+          onclick="resetOpportunityFilters()"
+          class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-black transition-colors shadow-sm"
+        >
+          Reset All Filters
         </button>
       </div>
     `;
     return;
   }
 
-  container.innerHTML = filtered.map(item => {
-    const matchingPills = (item.matchingSkills || []).map(skill => 
-      `<span class="text-[11px] px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md font-medium">${skill}</span>`
-    ).join('');
-
+  container.innerHTML = list.map(item => {
+    const isSaved = savedListingIds.has(item.id);
     const urls = item.searchUrls || {};
     const sourceLower = (item.source || '').toLowerCase();
     
     // Platform styling
     let sourceBadgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
     let sourceIcon = 'fa-solid fa-briefcase';
-    if (sourceLower.includes('linkedin')) {
-      sourceBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
-      sourceIcon = 'fa-brands fa-linkedin';
-    } else if (sourceLower.includes('internshala')) {
-      sourceBadgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
-      sourceIcon = 'fa-solid fa-graduation-cap';
+    if (sourceLower.includes('greenhouse')) {
+      sourceBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+      sourceIcon = 'fa-solid fa-seedling';
+    } else if (sourceLower.includes('lever')) {
+      sourceBadgeClass = 'bg-indigo-50 text-indigo-800 border-indigo-200';
+      sourceIcon = 'fa-solid fa-building';
+    } else if (sourceLower.includes('ashby')) {
+      sourceBadgeClass = 'bg-sky-50 text-sky-800 border-sky-200';
+      sourceIcon = 'fa-solid fa-cube';
     } else if (sourceLower.includes('remotive')) {
       sourceBadgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
       sourceIcon = 'fa-solid fa-laptop-code';
+    } else if (sourceLower.includes('linkedin')) {
+      sourceBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+      sourceIcon = 'fa-brands fa-linkedin';
     }
 
-    const applyUrl = item.applyUrl || (urls.linkedIn || urls.internshala || '#');
+    // Work Mode styling
+    const workMode = (item.workMode || 'unknown').toLowerCase();
+    let workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">Office / Flexible</span>';
+    if (workMode === 'remote') {
+      workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200"><i class="fa-solid fa-house-laptop text-[10px] mr-1"></i>Remote</span>';
+    } else if (workMode === 'hybrid') {
+      workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-200"><i class="fa-solid fa-arrows-split-up-and-left text-[10px] mr-1"></i>Hybrid</span>';
+    } else if (workMode === 'onsite') {
+      workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-semibold border border-sky-200"><i class="fa-solid fa-building text-[10px] mr-1"></i>On-site</span>';
+    }
+
+    // Matching skills pills
+    const matchingPills = (item.matchingSkills || []).slice(0, 4).map(skill => 
+      `<span class="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md font-semibold">${skill}</span>`
+    ).join('');
+
+    // Missing skills pills
+    const missingPills = (item.missingSkills || []).slice(0, 2).map(skill =>
+      `<span class="text-[10px] px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md font-medium"><i class="fa-solid fa-triangle-exclamation text-[9px] mr-1"></i>${skill}</span>`
+    ).join('');
+
+    // Uncertainties
+    const uncertaintyPills = (item.uncertainties || []).slice(0, 1).map(unc =>
+      `<span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-md font-medium">${unc}</span>`
+    ).join('');
+
+    // Score Breakdown attributes
+    const breakdown = item.scoreBreakdown || {};
+
+    const applyUrl = item.applyUrl || item.canonicalUrl || '#';
 
     return `
-      <div class="opportunity-card bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group">
+      <div class="opportunity-card bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group relative">
+        
         <div>
-          <!-- Header: Platform & Match Badge -->
+          <!-- Top Row: Source, WorkMode, Score & Bookmark -->
           <div class="flex items-center justify-between gap-2 mb-3">
-            <span class="text-[11px] font-bold px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${sourceBadgeClass}">
-              <i class="${sourceIcon}"></i> ${item.source || 'Verified Role'}
-            </span>
-            <span class="text-[11px] font-extrabold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-100">
-              ${item.matchPercentage || 85}% Match
-            </span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${sourceBadgeClass}">
+                <i class="${sourceIcon}"></i> ${item.source || 'Verified Role'}
+              </span>
+              ${workModeBadge}
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 shadow-xs" title="Multi-factor Profile Fit Score">
+                ${item.matchPercentage || 85}% Match
+              </span>
+
+              <button
+                data-save-id="${item.id}"
+                onclick="toggleSaveOpportunity('${item.id}', event)"
+                title="${isSaved ? 'Remove from saved' : 'Save opportunity'}"
+                class="w-8 h-8 rounded-xl ${isSaved ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-slate-50 text-slate-400 hover:text-slate-700 border border-slate-200'} flex items-center justify-center transition-all"
+              >
+                <i class="${isSaved ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'} text-xs"></i>
+              </button>
+            </div>
           </div>
 
-          <!-- Company Name -->
+          <!-- Company Name with Link if present -->
           <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
             <i class="fa-solid fa-building text-[10px] text-slate-400"></i>
-            <span class="truncate">${item.company || 'Tech Company'}</span>
+            ${item.companyWebsite ? `
+              <a href="${item.companyWebsite}" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 truncate underline-offset-2 hover:underline">
+                ${item.company}
+              </a>
+            ` : `<span class="truncate">${item.company}</span>`}
+            <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]" title="Verified Recruiter Feed"></i>
           </div>
 
           <!-- Role Title -->
-          <h3 class="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
+          <h3 class="text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
             ${item.title}
           </h3>
 
-          <!-- Location, Stipend, Duration Badges -->
+          <!-- Badges Bar: Location, Stipend, Duration, Posted Date -->
           <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
-            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
-              <i class="fa-solid fa-location-dot text-[10px] mr-1 text-slate-400"></i>${item.location || 'India / Remote'}
+            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium" title="Role Location">
+              <i class="fa-solid fa-location-dot text-[10px] mr-1 text-slate-400"></i>${item.location || 'Location not specified'}
             </span>
-            ${item.stipend ? `
+            ${item.stipend && !item.stipend.toLowerCase().includes('unpaid') && !item.stipend.toLowerCase().includes('not disclosed') ? `
               <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-100">
                 <i class="fa-solid fa-money-bill-wave text-[10px] mr-1"></i>${item.stipend}
               </span>
             ` : ''}
-            ${item.duration ? `
+            ${item.duration && !item.duration.toLowerCase().includes('not specified') ? `
               <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-medium border border-sky-100">
                 <i class="fa-regular fa-clock text-[10px] mr-1"></i>${item.duration}
               </span>
             ` : ''}
+            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-medium">
+              <i class="fa-regular fa-calendar text-[10px] mr-1"></i>${item.postedDateDisplay || 'Date not provided'}
+            </span>
           </div>
 
-          <!-- Relevance Explanation -->
-          <p class="text-xs text-slate-600 mt-3 leading-relaxed">
-            ${item.whyItMatches || item.relevanceExplanation || 'Strong alignment with your profile background.'}
-          </p>
-
-          <!-- Matching Skills -->
-          <div class="mt-4">
-            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Matching Skills</span>
-            <div class="flex flex-wrap gap-1">${matchingPills || '<span class="text-xs text-slate-400">Core software fundamentals</span>'}</div>
+          <!-- Fact-based Match Explanation Box -->
+          <div class="mt-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
+            <div class="flex items-start gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 text-xs mt-0.5 shrink-0"></i>
+              <span>${item.whyItMatches || item.relevanceExplanation || 'Profile aligns with technical requirements.'}</span>
+            </div>
           </div>
+
+          <!-- Matching and Missing Skills Section -->
+          <div class="mt-4 space-y-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Matching Skills:</span>
+              <div class="flex flex-wrap gap-1">${matchingPills || '<span class="text-xs text-slate-400">Software engineering fundamentals</span>'}</div>
+            </div>
+
+            ${(missingPills || uncertaintyPills) ? `
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Unconfirmed / Gaps:</span>
+                <div class="flex flex-wrap gap-1">${missingPills} ${uncertaintyPills}</div>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Transparent Score Factors Dropdown / Indicator -->
+          ${breakdown.roleRelevance !== undefined ? `
+            <details class="mt-3 pt-2 text-[11px] text-slate-500 border-t border-slate-100">
+              <summary class="cursor-pointer font-bold text-slate-600 hover:text-slate-900 flex items-center justify-between">
+                <span>Score Breakdown (${item.matchPercentage} pts)</span>
+                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              </summary>
+              <div class="grid grid-cols-2 gap-x-2 gap-y-1 mt-2 text-[10px] bg-slate-50 p-2 rounded-xl border border-slate-100">
+                <div>Role Relevance: <b class="text-slate-800">${breakdown.roleRelevance}/30</b></div>
+                <div>Required Skills: <b class="text-slate-800">${breakdown.requiredSkills}/25</b></div>
+                <div>Location/Remote: <b class="text-slate-800">${breakdown.locationRemote}/10</b></div>
+                <div>Eligibility Fit: <b class="text-slate-800">${breakdown.eligibility}/10</b></div>
+                <div>Posting Recency: <b class="text-slate-800">${breakdown.recency}/8</b></div>
+                <div>Completeness: <b class="text-slate-800">${breakdown.completeness}/4</b></div>
+              </div>
+            </details>
+          ` : ''}
         </div>
 
-        <!-- Action Section: Apply Directly + Live Search Links -->
+        <!-- Action Section: Direct Apply Button + Search Platforms -->
         <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
           <!-- Primary Direct Apply Button -->
           <a
@@ -304,22 +664,17 @@ function renderOpportunitiesList() {
             rel="noopener noreferrer"
             class="w-full py-2.5 px-4 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-black transition-all flex items-center justify-center gap-2 shadow-sm"
           >
-            <span>Apply on ${item.source || 'Platform'}</span>
+            <span>Apply Directly on ${item.source}</span>
             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
           </a>
 
-          <!-- Cross-platform Quick Links -->
+          <!-- Cross-platform Research Links -->
           <div>
-            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1.5">Search Similar Roles On:</span>
+            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Research Similar Postings:</span>
             <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold text-center">
               ${urls.linkedIn ? `
                 <a href="${urls.linkedIn}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors flex items-center justify-center gap-1">
                   <i class="fa-brands fa-linkedin text-xs"></i> LinkedIn
-                </a>
-              ` : ''}
-              ${urls.internshala ? `
-                <a href="${urls.internshala}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors flex items-center justify-center gap-1">
-                  <i class="fa-solid fa-graduation-cap text-xs"></i> Internshala
                 </a>
               ` : ''}
               ${urls.unstop ? `
@@ -331,97 +686,45 @@ function renderOpportunitiesList() {
                   <i class="fa-solid fa-magnifying-glass text-xs"></i> Indeed
                 </a>
               ` : ''}
+              ${urls.googleJobs ? `
+                <a href="${urls.googleJobs}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center gap-1">
+                  <i class="fa-brands fa-google text-xs"></i> Google
+                </a>
+              ` : ''}
             </div>
           </div>
         </div>
+
       </div>
     `;
   }).join('');
 }
 
 /**
- * Render opportunity listings with real search platform URLs & multi-source results
+ * Main Opportunity Entry Point for results.html
  */
-function renderOpportunitiesAsProducts(opportunities, isFallback = false) {
+function renderOpportunitiesAsProducts(opportunities, isFallback = false, meta = {}) {
   const container = document.getElementById('internship-results');
-  const countBadge = document.getElementById('results-count-badge');
-  
   if (!container) return;
 
   currentAllOpportunities = Array.isArray(opportunities) ? opportunities : [];
-  currentFilterPlatform = 'all';
+  currentSourceStatuses = meta.sourceStatuses || {};
 
-  if (currentAllOpportunities.length === 0) {
-    container.innerHTML = `
-      <div class="bg-white border border-slate-200 rounded-2xl p-8 text-center text-slate-500">
-        <p class="text-sm font-semibold text-slate-800">No role recommendations available for your exact criteria.</p>
-        <p class="text-xs text-slate-500 mt-1">Try broadening your skills or switching workplace preference to "Any".</p>
-      </div>
-    `;
-    if (countBadge) countBadge.classList.add('hidden');
-    return;
-  }
-
-  // Count per source
-  const linkedInCount = currentAllOpportunities.filter(o => (o.source || '').toLowerCase().includes('linkedin')).length;
-  const internshalaCount = currentAllOpportunities.filter(o => (o.source || '').toLowerCase().includes('internshala')).length;
-  const otherCount = currentAllOpportunities.length - linkedInCount - internshalaCount;
-
-  if (countBadge) {
-    countBadge.textContent = `${currentAllOpportunities.length} Live Openings Found Across LinkedIn & Internshala`;
-    countBadge.classList.remove('hidden');
-  }
-
-  let html = '';
-
-  // Filter toolbar
-  html += `
-    <div class="flex flex-wrap items-center justify-between gap-3 mb-6 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
-      <div class="flex flex-wrap items-center gap-2">
-        <span class="text-xs font-bold text-slate-500 mr-1">Filter by Source:</span>
-        <button
-          onclick="filterOpportunitiesByPlatform('all')"
-          class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${currentFilterPlatform === 'all' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'}"
-        >
-          All (${currentAllOpportunities.length})
-        </button>
-        ${linkedInCount > 0 ? `
-          <button
-            onclick="filterOpportunitiesByPlatform('LinkedIn')"
-            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-blue-700 hover:bg-blue-50 border border-blue-200 flex items-center gap-1.5"
-          >
-            <i class="fa-brands fa-linkedin"></i> LinkedIn (${linkedInCount})
-          </button>
-        ` : ''}
-        ${internshalaCount > 0 ? `
-          <button
-            onclick="filterOpportunitiesByPlatform('Internshala')"
-            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-amber-700 hover:bg-amber-50 border border-amber-200 flex items-center gap-1.5"
-          >
-            <i class="fa-solid fa-graduation-cap"></i> Internshala (${internshalaCount})
-          </button>
-        ` : ''}
-        ${otherCount > 0 ? `
-          <button
-            onclick="filterOpportunitiesByPlatform('Remotive')"
-            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-purple-700 hover:bg-purple-50 border border-purple-200 flex items-center gap-1.5"
-          >
-            <i class="fa-solid fa-laptop-code"></i> Remote / Others (${otherCount})
-          </button>
-        ` : ''}
-      </div>
-      <div class="text-xs text-slate-500 font-medium">
-        <i class="fa-solid fa-bolt text-indigo-500 mr-1"></i> Multi-API Live Feeds
-      </div>
-    </div>
-  `;
+  // Render the source status banner
+  renderSourceStatusBar(
+    currentSourceStatuses,
+    meta.searchDurationMs || 0,
+    meta.isCached || false,
+    meta.cachedAt || null
+  );
 
   // Cards grid container
-  html += `<div id="internship-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>`;
+  container.innerHTML = `<div id="internship-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>`;
 
-  container.innerHTML = html;
-  renderOpportunitiesList();
+  // Apply filters and render cards
+  applyAllOpportunityFilters();
 }
+
 
 // Views and Navigation Elements Mapping
 let views = {};
@@ -964,7 +1267,7 @@ async function initResultsPage() {
         batch: profile.batch || 'Current Student'
       });
 
-      renderOpportunitiesAsProducts(matchData.data, matchData.fallback);
+      renderOpportunitiesAsProducts(matchData.data, matchData.fallback, matchData);
       if (panelOpportunities) {
         panelOpportunities.classList.remove('hidden');
       }
