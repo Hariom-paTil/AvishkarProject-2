@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillBridge AI — Intelligence Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Security Authentication Gate: Restricts access to Admin123@gmail.com / @2005Admin -->
+  <script>
+    (function() {
+      const isAuth = localStorage.getItem('sb_admin_auth') === '1' || sessionStorage.getItem('sb_admin_auth') === '1';
+      fetch('/api/session', { credentials: 'same-origin' })
+        .then(res => {
+          if (!res.ok && !isAuth) {
+            window.location.replace('/login.html');
+          }
+        })
+        .catch(() => {
+          if (!isAuth) {
+            window.location.replace('/login.html');
+          }
+        });
+    })();
+  </script>
+</head>
+<body data-page="results" class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-slate-900 selection:text-white">
+
+  <!-- Top Header Navigation -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between">
+      
+      <!-- Logo & Back Link -->
+      <a href="/index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-shapes text-lg"></i>
+        </div>
+        <div>
+          <span class="text-xl font-black tracking-tight text-slate-900 block leading-none">SkillBridge<span class="text-indigo-600">.ai</span></span>
+          <span class="text-[10px] font-semibold text-slate-400 tracking-wider uppercase">Analysis Engine</span>
+        </div>
+      </a>
+
+      <!-- Center / Right Badges & Controls -->
+        <div class="flex items-center gap-3">
+          <button
+            onclick="editPreviousProfile()"
+            title="Edit your skills and profile parameters without starting over"
+            class="px-4 py-2 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-xl hover:bg-indigo-100 transition-colors flex items-center gap-1.5 shadow-sm"
+          >
+            <i class="fa-solid fa-pen-to-square text-xs"></i>
+            <span>Edit Profile & Skills</span>
+          </button>
+
+          <span id="results-type-badge" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border bg-slate-100 text-slate-700 border-slate-200">
+            <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+            <span id="results-type-badge-text">Processing Selection</span>
+          </span>
+
+          <button
+            onclick="logoutSkillBridge()"
+            title="Sign out of SkillBridge AI"
+            class="px-3.5 py-2 text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors flex items-center gap-1.5"
+          >
+            <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+            <span class="hidden sm:inline">Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      
+      <!-- Dynamic Animated Loader Screen -->
+      <section id="results-loader" class="min-h-[75vh] flex items-center justify-center px-4">
+        <div class="text-center max-w-lg">
+          <div id="loader-orb" class="mx-auto mb-6 w-20 h-20 rounded-3xl flex items-center justify-center text-white text-2xl shadow-xl result-orb">
+            <i id="loader-icon" class="fa-solid fa-circle-notch fa-spin"></i>
+          </div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 mb-3">
+            <i class="fa-solid fa-sparkles text-indigo-600 text-xs"></i>
+            <span id="loader-kicker">AI Intelligence Engine</span>
+          </div>
+          <h1 id="loader-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Generating Live Analysis</h1>
+          <p id="loader-copy" class="mt-2 text-sm text-slate-500 leading-relaxed max-w-md mx-auto">
+            Tailoring industry-calibrated recommendations from your profile and live market signals...
+          </p>
+          <div class="mt-8 h-2 w-64 mx-auto bg-slate-200/80 rounded-full overflow-hidden shadow-inner">
+            <div id="loader-bar" class="h-full w-1/3 result-bar rounded-full"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Content View (Rendered After Generation) -->
+      <section id="results-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- Dynamic Header Banner -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between pb-8 mb-8 border-b border-slate-200 gap-4">
+          <div>
+            <div id="results-kicker" class="text-xs font-bold uppercase tracking-widest text-indigo-600 flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+              <span id="results-kicker-text">AI Recommendation</span>
+            </div>
+            <h1 id="results-heading" class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1 tracking-tight">
+              Your Personalized Results
+            </h1>
+            <p id="results-subheading" class="text-sm text-slate-500 mt-1">
+              Generated with precision from your selected parameters.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              onclick="editPreviousProfile()"
+              class="px-5 py-2.5 text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl transition-colors flex items-center gap-2 shadow-sm"
+            >
+              <i class="fa-solid fa-pen-to-square text-xs text-indigo-600"></i>
+              <span>Edit Profile & Skills</span>
+            </button>
+            <button
+              onclick="window.print()"
+              class="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <i class="fa-solid fa-print text-xs"></i>
+              <span>Print Report</span>
+            </button>
+            <a
+              id="results-new-analysis-btn"
+              href="/index.html"
+              class="px-5 py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-black rounded-xl transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <i class="fa-solid fa-rotate-right text-xs"></i>
+              <span>New Analysis</span>
+            </a>
+          </div>
+        </div>
+
+      <!-- ========================================================================= -->
+      <!-- PANEL 1: OPPORTUNITIES MATCHER (INTERNSHIPS & JOBS)                       -->
+      <!-- ========================================================================= -->
+      <div id="opportunities-panel" class="hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+          <div>
+            <span id="results-count-badge" class="text-xs font-bold px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 inline-block">
+              0 Verified Roles
+            </span>
+            <span class="text-xs text-slate-500 ml-2">Click any role to apply directly on LinkedIn, Indeed, or Wellfound.</span>
+          </div>
+        </div>
+
+        <div id="internship-results" class="min-h-[200px]"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- PANEL 2: SKILL GAP ANALYZER DASHBOARD                                    -->
+      <!-- ========================================================================= -->
+      <div id="skillgap-panel" class="hidden">
+        <div class="result-enter-skillgap space-y-8">
+          
+          <!-- Summary Header Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Readiness Gauge Card -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Readiness Benchmark</span>
+                <h3 class="text-lg font-bold text-slate-900 mt-1" id="skillgap-role-title">Target Role Match</h3>
+              </div>
+
+              <div class="py-6 flex items-center justify-center">
+                <div class="relative w-32 h-32 flex items-center justify-center">
+                  <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <path class="text-slate-100" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path id="skillgap-circle-path" class="text-purple-600 transition-all duration-1000 ease-out" stroke-width="3.5" stroke-dasharray="86, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                  </svg>
+                  <div class="absolute text-center">
+                    <span id="skillgap-score-display" class="text-3xl font-black text-slate-900">86%</span>
+                    <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Score</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold">
+                <span class="text-slate-500">ATS Parse Level:</span>
+                <span id="skillgap-verdict-badge" class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  High Qualification
+                </span>
+              </div>
+            </div>
+
+            <!-- Strengths & Gaps Cards -->
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Strengths -->
+              <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-4">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-circle-check"></i>
+                  </div>
+                  <span>Verified Core Strengths</span>
+                </div>
+                <ul id="skillgap-strengths-list" class="space-y-2.5 text-xs text-slate-600 flex-grow"></ul>
+              </div>
+
+              <!-- Missing Skills -->
+              <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-4">
+                  <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                  </div>
+                  <span>Missing High-Impact Skills</span>
+                </div>
+                <ul id="skillgap-missing-list" class="space-y-2.5 text-xs text-slate-600 flex-grow"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 14-Day Action Roadmap -->
+          <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+            <div class="flex items-center gap-2 text-slate-900 font-bold text-base mb-4">
+              <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-route"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">AI Recommended Action Roadmap</h4>
+                <p class="text-xs text-slate-500">Step-by-step roadmap to eliminate detected deficiencies.</p>
+              </div>
+            </div>
+            <div id="skillgap-roadmap-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"></div>
+          </div>
+
+          <!-- Per-Skill Competency Breakdown Table -->
+          <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm overflow-x-auto">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">Per-Skill Competency Breakdown</h4>
+                <p class="text-xs text-slate-500">Detailed gap audit across core target role proficiencies.</p>
+              </div>
+              <span class="text-xs font-semibold px-2.5 py-1 bg-purple-50 text-purple-700 rounded-full border border-purple-100">
+                Detailed Analysis
+              </span>
+            </div>
+            <div id="skillgap-breakdown-container" class="space-y-3"></div>
+          </div>
+
+          <!-- Deep AI Coach Diagnostic Output -->
+          <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <div class="flex items-center gap-3 pb-4 border-b border-slate-100 mb-6">
+              <div class="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-base">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-purple-600">Executive Briefing</div>
+                <h3 class="text-lg font-extrabold text-slate-900">Senior Career Mentor Diagnostic</h3>
+              </div>
+            </div>
+            <div id="skillgap-analysis-output" class="text-sm leading-relaxed text-slate-700 whitespace-pre-line font-medium"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- PANEL 3: MOCK INTERVIEW ASSESSMENT                                       -->
+      <!-- ========================================================================= -->
+      <div id="interview-panel" class="hidden">
+        <div class="result-enter-interview max-w-4xl mx-auto">
+          
+          <!-- Quiz Container -->
+          <div id="mock-interview-quiz" class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <div class="flex items-center justify-between pb-6 border-b border-slate-100 gap-4">
+              <div>
+                <div class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sky-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                  <span>Interactive Technical Round</span>
+                </div>
+                <h3 id="mock-role-title" class="text-xl font-extrabold text-slate-900 mt-1">Live Technical Assessment</h3>
+              </div>
+              <div class="text-right">
+                <div id="mcq-progress" class="text-base font-black text-slate-900">1 / 10</div>
+                <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1.5">
+                  <div id="mcq-progress-bar" class="h-full bg-sky-600 transition-all duration-300" style="width: 10%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question Card Header with Badges -->
+            <div id="mock-question-box" class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span id="mock-category-badge" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-sky-100 text-sky-800 border border-sky-200">Technical</span>
+                  <span id="mock-difficulty-badge" class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-200 text-slate-700">Medium</span>
+                </div>
+                <span id="mock-skill-tag" class="text-[11px] font-semibold text-slate-500"><i class="fa-solid fa-code text-xs mr-1"></i>JavaScript</span>
+              </div>
+
+              <h4 id="mock-question-text" class="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                Loading question...
+              </h4>
+
+              <!-- Why Asked & Expected Answer Points -->
+              <div class="mt-4 pt-4 border-t border-slate-200/60 space-y-2">
+                <div id="mock-why-asked" class="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200">
+                  <span class="font-bold text-slate-900"><i class="fa-solid fa-circle-info text-sky-600 mr-1"></i> Why Interviewers Ask This:</span>
+                  <span id="mock-why-asked-text">Evaluates core technical concepts.</span>
+                </div>
+                <div id="mock-expected-points" class="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200">
+                  <span class="font-bold text-slate-900"><i class="fa-solid fa-list-check text-emerald-600 mr-1"></i> Key Concepts to Include:</span>
+                  <ul id="mock-expected-points-list" class="mt-1.5 space-y-1 pl-4 list-disc text-slate-600"></ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="mock-options" class="mt-6 space-y-3"></div>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div id="mock-feedback" class="text-xs font-semibold text-slate-600 min-h-[20px]"></div>
+              <button
+                id="mock-next-btn"
+                class="w-full sm:w-auto px-6 py-3 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-colors shadow-sm"
+              >
+                Next Question
+              </button>
+            </div>
+          </div>
+
+          <!-- Scorecard Results Screen -->
+          <div id="mock-interview-results" class="hidden bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <div class="flex items-center justify-between pb-6 border-b border-slate-100 gap-4">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600">Complete</div>
+                <h3 class="text-2xl font-extrabold text-slate-900 mt-1">Technical Scorecard</h3>
+              </div>
+              <div class="text-right">
+                <div id="final-score" class="text-4xl font-black text-slate-900">0/10</div>
+                <span id="final-score-badge" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                  Assessment Finished
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+                  <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                  <span>Demonstrated Strengths</span>
+                </div>
+                <ul id="strong-areas" class="space-y-2 text-xs text-slate-600"></ul>
+              </div>
+
+              <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+                  <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                  <span>Recommended Focus Areas</span>
+                </div>
+                <ul id="weak-areas" class="space-y-2 text-xs text-slate-600"></ul>
+              </div>
+            </div>
+
+            <div class="mt-6 p-6 rounded-2xl border border-slate-200 bg-slate-50">
+              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                <span>AI Coaching Assessment</span>
+              </h4>
+              <p id="final-insight" class="text-xs text-slate-700 leading-relaxed font-medium"></p>
+            </div>
+
+            <div class="mt-8 flex items-center justify-end gap-3">
+              <a
+                href="/index.html#interview"
+                class="px-6 py-3 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-colors shadow-sm"
+              >
+                Retake Interview
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200/80 py-8 mt-auto text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4">
+      &copy; 2026 SkillBridge AI Technologies, Inc. Protected Admin Portal.
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

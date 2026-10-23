@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkillBridge AI — Accelerate Your Tech Career with AI</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Security Authentication Gate: Restricts access to Admin123@gmail.com / @2005Admin -->
+  <script>
+    (function() {
+      // Immediate gate to prevent content flash for unauthenticated visitors
+      const isAuth = localStorage.getItem('sb_admin_auth') === '1' || sessionStorage.getItem('sb_admin_auth') === '1';
+      fetch('/api/session', { credentials: 'same-origin' })
+        .then(res => {
+          if (!res.ok && !isAuth) {
+            window.location.replace('/login.html');
+          }
+        })
+        .catch(() => {
+          if (!isAuth) {
+            window.location.replace('/login.html');
+          }
+        });
+    })();
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-slate-900 selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-slate-900 text-white text-xs py-2.5 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
+    <span class="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase">New</span>
+    <span>SkillBridge AI 2.0 is live: Real-time Voice Mock Interviews & ATS Match Audit.</span>
+    <button onclick="navigateTo('interview')" class="underline font-semibold hover:text-slate-300 ml-1">Try Interviewer &rarr;</button>
+  </div>
+
+  <!-- Main Website Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#home" onclick="navigateTo('home'); return false;" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-shapes text-lg"></i>
+        </div>
+        <div>
+          <span class="text-xl font-black tracking-tight text-slate-900 block leading-none">SkillBridge<span class="text-indigo-600">.ai</span></span>
+          <span class="text-[10px] font-semibold text-slate-400 tracking-wider uppercase">Career Intelligence</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <button id="nav-home" data-nav="home" onclick="navigateTo('home')" class="nav-link active py-2 hover:text-slate-900 transition-colors">
+          Home
+        </button>
+        <button id="nav-internship" data-nav="internship" onclick="navigateTo('internship')" class="nav-link py-2 hover:text-slate-900 transition-colors">
+          Internship Finder
+        </button>
+        <button id="nav-skillgap" data-nav="skillgap" onclick="navigateTo('skillgap')" class="nav-link py-2 hover:text-slate-900 transition-colors">
+          Skill Gap Analyzer
+        </button>
+        <button id="nav-interview" data-nav="interview" onclick="navigateTo('interview')" class="nav-link py-2 hover:text-slate-900 transition-colors">
+          Mock Interviews
+        </button>
+      </nav>
+
+      <!-- Right Action CTA: Authenticated Admin Status & Logout (Signup Removed) -->
+      <div class="hidden sm:flex items-center gap-3">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <i class="fa-solid fa-user-shield text-slate-500"></i>
+          <span id="header-admin-email">Admin123@gmail.com</span>
+        </div>
+        <button
+          onclick="logoutSkillBridge()"
+          title="Sign out of SkillBridge AI"
+          class="px-3.5 py-2 text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors flex items-center gap-1.5"
+        >
+          <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none">
+        <i id="mobile-menu-icon" class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 py-4 space-y-2">
+      <button onclick="navigateTo('home'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-50 text-slate-800">
+        Home
+      </button>
+      <button onclick="navigateTo('internship'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-50 text-slate-800">
+        Internship Finder
+      </button>
+      <button onclick="navigateTo('skillgap'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-50 text-slate-800">
+        Skill Gap Analyzer
+      </button>
+      <button onclick="navigateTo('interview'); toggleMobileMenu()" class="w-full text-left px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-50 text-slate-800">
+        Mock Interviews
+      </button>
+      <div class="pt-3 border-t border-slate-100 flex flex-col gap-2">
+        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 text-xs font-semibold text-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <i class="fa-solid fa-user-shield text-slate-500"></i>
+          <span>Admin123@gmail.com</span>
+        </div>
+        <button onclick="logoutSkillBridge()" class="w-full py-2 text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-lg text-center">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Website Container -->
+  <main class="flex-grow">
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: FULL WEBSITE LANDING PAGE (Visible by Default)                 -->
+    <!-- ========================================================================= -->
+    <div id="home-view" class="view-container">
+
+      <!-- Hero Section -->
+      <section class="relative pt-16 pb-20 md:pt-24 md:pb-28 bg-white border-b border-slate-200/80 bg-dot-pattern">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          
+          <!-- Badge Pill -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-800 mb-8">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>AI-Driven Career Acceleration for Engineers</span>
+            <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+          </div>
+
+          <!-- Hero Headline -->
+          <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 max-w-4xl mx-auto leading-[1.12]">
+            Launch Your Tech Career <br class="hidden sm:inline" />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-800">
+              with AI Intelligence
+            </span>
+          </h1>
+
+          <!-- Subtext -->
+          <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Discover verified internships, bridge your technical skill gaps with personalized roadmaps, and ace technical rounds with interactive AI mock interviews.
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button onclick="navigateTo('internship')" class="w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-slate-900 hover:bg-black rounded-xl shadow-lg shadow-slate-900/10 hover:shadow-xl transition-all flex items-center justify-center gap-2">
+              <span>Find Tech Internships</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+            <button onclick="navigateTo('skillgap')" class="w-full sm:w-auto px-8 py-4 text-base font-semibold text-slate-800 bg-white border border-slate-300 hover:border-slate-400 hover:bg-slate-50 rounded-xl transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-file-waveform text-slate-500"></i>
+              <span>Audit Your Resume</span>
+            </button>
+          </div>
+
+          <!-- Social Proof / University Logos -->
+          <div class="mt-16 pt-10 border-t border-slate-100 max-w-4xl mx-auto">
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-600 mb-6">
+              Empowering candidates placed at top engineering organizations
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12 opacity-85 text-slate-700 text-sm font-bold tracking-tight">
+              <span class="flex items-center gap-2"><i class="fa-brands fa-google text-lg"></i> Google</span>
+              <span class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-lg"></i> Microsoft</span>
+              <span class="flex items-center gap-2"><i class="fa-brands fa-amazon text-lg"></i> Amazon</span>
+              <span class="flex items-center gap-2"><i class="fa-brands fa-meta text-lg"></i> Meta</span>
+              <span class="flex items-center gap-2"><i class="fa-brands fa-apple text-lg"></i> Apple</span>
+              <span class="flex items-center gap-2"><i class="fa-brands fa-stripe text-lg"></i> Stripe</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Dashboard Showcase Banner -->
+      <section class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-14">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-indigo-600">The Modern Career Engine</h2>
+            <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">Everything you need to break into tech</p>
+            <p class="text-slate-600 text-base mt-3">Three intelligent tools integrated into a unified career acceleration platform.</p>
+          </div>
+
+          <!-- 3-Column Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Card 1: Internship Finder -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xl font-bold text-slate-900">AI Internship Finder</h3>
+                  <span class="text-xs font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded border border-emerald-100">Live</span>
+                </div>
+                <p class="mt-3 text-slate-600 text-sm leading-relaxed">
+                  Smart semantic search matching your GitHub repos, coursework, and skills against 10,000+ verified engineering roles.
+                </p>
+                <ul class="mt-6 space-y-2.5 text-xs text-slate-600 font-medium border-t border-slate-100 pt-5">
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Auto-parsed tech stack requirements</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Real-time stipend and visa filter</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-600"></i> Direct recruiters referral tracking</li>
+                </ul>
+              </div>
+              <div class="mt-8 pt-4 border-t border-slate-100">
+                <button onclick="navigateTo('internship')" class="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-black transition-colors flex items-center justify-center gap-2">
+                  <span>Browse Open Roles</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Skill Gap Analyzer -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xl font-bold text-slate-900">Skill Gap Analyzer</h3>
+                  <span class="text-xs font-semibold px-2 py-0.5 bg-purple-50 text-purple-700 rounded border border-purple-100">ATS 2.0</span>
+                </div>
+                <p class="mt-3 text-slate-600 text-sm leading-relaxed">
+                  Upload your CV to pinpoint missing industry keywords, framework proficiencies, and obtain an actionable 14-day study roadmap.
+                </p>
+                <ul class="mt-6 space-y-2.5 text-xs text-slate-600 font-medium border-t border-slate-100 pt-5">
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-600"></i> Instant ATS compatibility score</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-600"></i> High-frequency keyword extraction</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-purple-600"></i> Project recommendations to fill gaps</li>
+                </ul>
+              </div>
+              <div class="mt-8 pt-4 border-t border-slate-100">
+                <button onclick="navigateTo('skillgap')" class="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-black transition-colors flex items-center justify-center gap-2">
+                  <span>Audit Your Skills</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 3: AI Mock Interviews -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group">
+              <div>
+                <div class="w-12 h-12 rounded-xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center text-xl mb-6 group-hover:scale-110 transition-transform">
+                  <i class="fa-solid fa-microphone-lines"></i>
+                </div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xl font-bold text-slate-900">AI Mock Interviews</h3>
+                  <span class="text-xs font-semibold px-2 py-0.5 bg-sky-50 text-sky-700 rounded border border-sky-100">Interactive</span>
+                </div>
+                <p class="mt-3 text-slate-600 text-sm leading-relaxed">
+                  Simulate technical and behavioral rounds with an adaptive AI mentor that evaluates coding logic, clarity, and system design structure.
+                </p>
+                <ul class="mt-6 space-y-2.5 text-xs text-slate-600 font-medium border-t border-slate-100 pt-5">
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Real-time speech and tone telemetry</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Dynamic follow-up questioning</li>
+                  <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Granular score rubric & transcripts</li>
+                </ul>
+              </div>
+              <div class="mt-8 pt-4 border-t border-slate-100">
+                <button onclick="navigateTo('interview')" class="w-full py-2.5 px-4 rounded-xl text-sm font-semibold bg-slate-900 text-white hover:bg-black transition-colors flex items-center justify-center gap-2">
+                  <span>Start Mock Session</span>
+                  <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="py-20 bg-white border-y border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400">Step-by-step Execution</h2>
+            <p class="text-3xl font-extrabold text-slate-900 mt-2">How SkillBridge Accelerates Hiring</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+              <div class="text-2xl font-black text-slate-300 mb-4">01</div>
+              <h4 class="text-lg font-bold text-slate-900 mb-2">Connect Your Profile</h4>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                Upload your resume or link your GitHub profile. Our parser extracts your verified strengths and technology preferences in seconds.
+              </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+              <div class="text-2xl font-black text-slate-300 mb-4">02</div>
+              <h4 class="text-lg font-bold text-slate-900 mb-2">Target & Close Gaps</h4>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                Run our Skill Gap Analyzer against desired tech job listings. Fix missing keywords and finish fast-track micro-projects.
+              </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200">
+              <div class="text-2xl font-black text-slate-300 mb-4">03</div>
+              <h4 class="text-lg font-bold text-slate-900 mb-2">Interview & Convert</h4>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                Rehearse under real pressure with AI Mock Interviews. Build confidence and convert top-tier internship opportunities into offers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonial Section -->
+      <section class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="max-w-4xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 shadow-sm text-center">
+            <div class="flex justify-center gap-1 text-amber-400 text-sm mb-6">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <blockquote class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+              "The Skill Gap Analyzer pointed out that my resume was missing distributed systems and Redis caching keywords. Two weeks after tuning my resume and running 5 AI mock interviews, I secured a Summer 2026 Software Engineer Internship!"
+            </blockquote>
+            <div class="mt-6 flex items-center justify-center gap-4">
+              <div class="w-11 h-11 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-sm">
+                AK
+              </div>
+              <div class="text-left">
+                <div class="font-bold text-slate-900 text-sm">Alexandre Kim</div>
+                <div class="text-xs text-slate-500">Incoming SWE Intern &bull; Computer Science '27</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Conversion CTA -->
+      <section class="py-20 bg-slate-900 text-white text-center">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="text-3xl sm:text-5xl font-black tracking-tight">Ready to Level Up Your Career?</h2>
+          <p class="mt-4 text-slate-300 text-base sm:text-lg max-w-xl mx-auto">
+            Join thousands of students and engineers landing dream internships with SkillBridge AI.
+          </p>
+          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button onclick="navigateTo('internship')" class="px-8 py-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors shadow-lg">
+              Explore Internships Now
+            </button>
+            <button onclick="navigateTo('interview')" class="px-8 py-4 bg-slate-800 text-white border border-slate-700 font-bold rounded-xl hover:bg-slate-700 transition-colors">
+              Start Free AI Interview
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: OPPORTUNITY FINDER (INTERNSHIPS & JOBS)                         -->
+    <!-- ========================================================================= -->
+    <div id="internship-view" class="view-container hidden max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-bold text-indigo-600 uppercase tracking-widest">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Module 01 &bull; AI Opportunities Matcher</span>
+          </div>
+          <h1 class="text-3xl font-extrabold text-slate-900 mt-1">AI Internship & Job Finder</h1>
+          <p class="text-slate-600 text-sm mt-1">
+            Discover verified roles across LinkedIn, Indeed, and top tech career portals tailored to your exact skills and stream.
+          </p>
+        </div>
+        <div>
+          <button data-nav="home" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+            &larr; Back to Website
+          </button>
+        </div>
+      </div>
+
+      <!-- Opportunity Configurator Form Card -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 mt-8 shadow-sm">
+        
+        <!-- Toggle: Internship vs Job -->
+        <div class="mb-6">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+            Target Opportunity Type <span class="text-rose-500">*</span>
+          </label>
+          <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 gap-1" id="opportunity-type-toggle">
+            <button
+              type="button"
+              id="type-btn-internship"
+              class="px-5 py-2 text-xs font-bold rounded-lg transition-all bg-slate-900 text-white shadow-sm"
+              onclick="setOpportunityType('internship')"
+            >
+              <i class="fa-solid fa-graduation-cap mr-1.5"></i> Internships
+            </button>
+            <button
+              type="button"
+              id="type-btn-job"
+              class="px-5 py-2 text-xs font-bold rounded-lg transition-all text-slate-600 hover:text-slate-900"
+              onclick="setOpportunityType('job')"
+            >
+              <i class="fa-solid fa-briefcase mr-1.5"></i> Full-Time Jobs (Entry-Level)
+            </button>
+          </div>
+        </div>
+
+        <!-- Option: Upload Resume (Groq Vision AI) OR Manual Entry -->
+        <div class="mb-6 p-5 rounded-2xl bg-gradient-to-r from-indigo-50/70 via-purple-50/50 to-slate-50 border border-indigo-100/80">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+            <div>
+              <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 bg-indigo-100/80 px-2.5 py-0.5 rounded-md">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Instant Autofill
+              </span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">Upload Resume to Auto-Detect Skills & Education</h3>
+              <p class="text-xs text-slate-500">Upload your resume image (PNG, JPG, WebP) — Groq Vision AI extracts your skills and education automatically.</p>
+            </div>
+            <div>
+              <label for="resume-upload-input" class="cursor-pointer px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm hover:shadow inline-flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>Choose Resume</span>
+              </label>
+              <input type="file" id="resume-upload-input" accept="image/*,.pdf" class="hidden" />
+            </div>
+          </div>
+
+          <!-- Drag and Drop Zone / Status Box -->
+          <div id="resume-drop-zone" class="border-2 border-dashed border-indigo-200/80 hover:border-indigo-400 rounded-xl p-4 text-center bg-white/70 transition-all cursor-pointer">
+            <div id="resume-upload-prompt" class="flex flex-col items-center justify-center gap-1 text-xs text-slate-500">
+              <i class="fa-solid fa-file-invoice text-2xl text-indigo-400 mb-1"></i>
+              <span class="font-semibold text-slate-700">Drag & drop your resume image here, or click "Choose Resume"</span>
+              <span class="text-[11px] text-slate-400">Supports PNG, JPG, JPEG, WebP. You can also manually add or modify skills below.</span>
+            </div>
+
+            <!-- Uploading / Scanning state -->
+            <div id="resume-uploading-state" class="hidden py-3 text-center">
+              <div class="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 animate-pulse">
+                <i class="fa-solid fa-circle-notch fa-spin text-base"></i>
+                <span id="resume-scan-status-text">Analyzing resume image with Groq Vision AI...</span>
+              </div>
+            </div>
+
+            <!-- Resume Parsed Success Summary -->
+            <div id="resume-parsed-card" class="hidden text-left p-3 bg-emerald-50/80 border border-emerald-200 rounded-xl">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-check"></i>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-bold text-slate-900" id="resume-parsed-title">Resume Analyzed Successfully!</h4>
+                    <p class="text-[11px] text-slate-600" id="resume-parsed-summary"></p>
+                  </div>
+                </div>
+                <button type="button" id="resume-clear-btn" class="text-xs text-slate-400 hover:text-slate-600">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              <div class="mt-2.5 pt-2.5 border-t border-emerald-100 flex flex-wrap gap-1" id="resume-skills-chips"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Education / Stream Field -->
+          <div>
+            <label for="internship-education-input" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              Education, Stream & Major <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="internship-education-input"
+              placeholder="e.g., B.Tech Computer Science, 3rd Year | MCA | B.Sc. Data Science | Mechanical Engineering"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-colors"
+            />
+          </div>
+
+          <!-- Skills & Tech Stack Field -->
+          <div>
+            <label for="internship-skills-input" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              Technical Skills & Proficiencies <span class="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="internship-skills-input"
+              placeholder="e.g., Python, React.js, JavaScript, Node.js, SQL, TypeScript, Git, Docker, REST APIs"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white transition-colors"
+            />
+          </div>
+
+          <!-- Learning Goals & Target Roles -->
+          <div class="md:col-span-2">
+            <label for="internship-goal-input" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              Learning Goals & Target Areas You Want To Pursue
+            </label>
+            <textarea
+              id="internship-goal-input"
+              rows="3"
+              placeholder="e.g., I want to learn full-stack web development, backend systems, AI/ML pipelines, data engineering, or product-focused software internships/jobs."
+              class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white resize-y"
+            ></textarea>
+          </div>
+
+          <!-- Work Mode Preference -->
+          <div>
+            <label for="internship-workplace" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              Workplace Location Preference
+            </label>
+            <select
+              id="internship-workplace"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition-colors"
+            >
+              <option value="Remote">Remote Only (Work from anywhere)</option>
+              <option value="Hybrid">Hybrid (Flexible office & home)</option>
+              <option value="On-site">On-site (Office based)</option>
+              <option value="Any" selected>Any (Remote, Hybrid, or On-site)</option>
+            </select>
+          </div>
+
+          <!-- Target Batch / Seniority Level -->
+          <div>
+            <label for="internship-batch" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              Graduation Batch / Candidate Stage
+            </label>
+            <select
+              id="internship-batch"
+              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition-colors"
+            >
+              <option value="Current College Student (2026 / 2027)">Current College Student (2026 / 2027 Batch)</option>
+              <option value="Final Year Student (2025 / 2026)">Final Year Student (2025 / 2026 Batch)</option>
+              <option value="Recent Graduate / Entry Level (0-1 yr exp)">Recent Graduate / Entry Level (0-1 yr exp)</option>
+              <option value="Early Student (1st / 2nd Year)">Early Student (1st / 2nd Year)</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Action Controls -->
+        <div class="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <i class="fa-brands fa-linkedin text-indigo-600 text-sm"></i>
+            <span>Real-time direct links targeting LinkedIn, Indeed & Wellfound</span>
+          </div>
+
+          <div class="flex items-center gap-4 w-full sm:w-auto">
+            <span id="internship-loading" class="hidden text-xs font-semibold text-indigo-600 animate-pulse flex items-center gap-2">
+              <i class="fa-solid fa-circle-notch fa-spin"></i>
+              <span>Scanning LinkedIn & tech career boards...</span>
+            </span>
+
+            <button
+              id="find-internships-btn"
+              type="button"
+              class="w-full sm:w-auto px-8 py-3.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-black disabled:bg-slate-400 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow flex items-center justify-center gap-2"
+            >
+              <span id="find-btn-label">Find Internships</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results Display Container -->
+      <div class="mt-12">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Recommended Opportunities</h2>
+            <p class="text-xs text-slate-500">Curated listings formatted like product cards with direct platform apply links.</p>
+          </div>
+          <span id="results-count-badge" class="hidden text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full border border-slate-200">
+            0 Matches
+          </span>
+        </div>
+
+        <div
+          id="internship-results"
+          class="min-h-[160px]"
+        >
+          <!-- Default Empty State -->
+          <div class="bg-white border border-dashed border-slate-300 rounded-2xl p-10 text-center text-slate-500">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-xl mx-auto mb-3">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+            </div>
+            <h3 class="text-sm font-bold text-slate-800">No Search Executed Yet</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+              Fill in your stream, skills, and target goals above, then click <strong class="text-slate-800">"Find Internships"</strong> (or Jobs) to retrieve product-style matched listings with direct application links.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: SKILL GAP ANALYZER TOOL CONTAINER                             -->
+    <!-- ========================================================================= -->
+    <div id="skillgap-view" class="view-container hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-8 border-b border-slate-200 gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-bold text-purple-600 uppercase tracking-widest">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Module 02</span>
+          </div>
+          <h1 class="text-3xl font-extrabold text-slate-900 mt-1">Skill Gap Analyzer</h1>
+          <p class="text-slate-600 text-sm mt-1">Benchmark your CV against target roles and discover missing proficiencies.</p>
+        </div>
+        <div>
+          <button onclick="navigateTo('home')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
+            &larr; Back to Website
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        
+        <!-- Left: Upload & Target Role Form -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:col-span-1 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 mb-4">Input Specifications</h3>
+            
+            <!-- Target Job Role Selection -->
+            <div class="mt-6">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Target Job Description / Title</label>
+              <input id="skillgap-target-role" type="text" value="Full-Stack Engineer (AI Applications)" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-slate-900 focus:bg-white" />
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Current Skills / Tech Stack</label>
+              <input id="skillgap-current-skills" type="text" placeholder="e.g. JavaScript, React, Python, SQL, Git" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white" />
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Current Education / Stream</label>
+              <input id="skillgap-education" type="text" placeholder="e.g. B.Tech CSE, 3rd year / MCA / B.Sc. IT" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white" />
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Future Goal / Career Focus</label>
+              <textarea id="skillgap-goal" rows="3" placeholder="e.g. I want to become a full-stack developer, build AI products, and get internship/job in software engineering." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white resize-none"></textarea>
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Extra Projects / Experience / Strengths</label>
+              <textarea id="skillgap-projects" rows="3" placeholder="e.g. personal portfolio, hackathon projects, internship experience, cloud deployment, UI/UX, data structures, AI projects" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white resize-none"></textarea>
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Target Seniority Level</label>
+              <select id="skillgap-seniority" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-slate-900">
+                <option>Summer 2026 Intern / Entry-Level</option>
+                <option>Junior Software Engineer</option>
+                <option>Mid-Level Developer</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="run-gap-audit-btn" data-action="analyze-skill-gap" class="mt-8 w-full py-3 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-black transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+            <span>Run Deep Gap Audit</span>
+          </button>
+        </div>
+
+        <!-- Right: Diagnostic Report Results -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:col-span-2 shadow-sm">
+          <div class="flex items-center justify-between pb-6 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Diagnostic Verdict</span>
+              <h3 class="text-xl font-extrabold text-slate-900">Full-Stack AI Developer Readiness</h3>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-black text-slate-900">84%</div>
+              <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">High Qualification</span>
+            </div>
+          </div>
+
+          <!-- Analysis Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <!-- Strength Checklist -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+                <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                <span>Detected Core Strengths</span>
+              </div>
+              <ul class="space-y-2 text-xs text-slate-600">
+                <li class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+                  <span>Modern React architecture, state management & hooks</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+                  <span>REST API integration & asynchronous JavaScript</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+                  <span>Git workflows, branching, and pull request reviews</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Missing Skills & Keywords -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                <span>Missing High-Impact Skills</span>
+              </div>
+              <ul class="space-y-2 text-xs text-slate-600">
+                <li class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+                  <span>Vector Databases (ChromaDB / Pinecone embeddings)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+                  <span>Redis caching & session token storage</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+                  <span>Docker containerization & deployment configs</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Suggested 14-Day Roadmap -->
+          <div class="mt-6 p-5 rounded-xl border border-slate-200 bg-slate-50">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">AI Recommended Action Roadmap</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Add a 2-day micro-project integrating an embedding database with Redis caching. Adding these two keywords increases your ATS parse rate from <strong class="text-slate-900">84%</strong> to <strong class="text-emerald-600">96%</strong>.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="skillgap-modal" class="skillgap-modal-backdrop hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+      <div class="skillgap-modal-panel w-full max-w-3xl max-h-[80vh] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+          <div>
+            <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-600">AI Skill Gap Insight</div>
+            <h3 class="text-lg font-extrabold text-slate-900 mt-1">Career Audit Report</h3>
+          </div>
+          <button id="close-skillgap-modal" class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="p-5 overflow-y-auto max-h-[70vh] bg-slate-50">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="flex-1 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500 mb-2">AI Career Coach</div>
+              <p id="modal-skillgap-analysis-output" class="text-sm leading-relaxed text-slate-700 whitespace-pre-line"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 4: AI MOCK INTERVIEW TOOL CONTAINER                              -->
+    <!-- ========================================================================= -->
+    <div id="interview-view" class="view-container hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-8 border-b border-slate-200 gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-xs font-bold text-sky-600 uppercase tracking-widest">
+            <i class="fa-solid fa-microphone-lines"></i>
+            <span>Module 03</span>
+          </div>
+          <h1 class="text-3xl font-extrabold text-slate-900 mt-1">AI Mock Interview Room</h1>
+          <p class="text-slate-600 text-sm mt-1">Practice realistic technical interviews based on your profile, skills, and target goals.</p>
+        </div>
+        <div>
+          <button onclick="navigateTo('home')" class="px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
+            &larr; Back to Website
+          </button>
+        </div>
+      </div>
+
+      <!-- Interview Studio Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        
+        <!-- Left: Student Profile / Interview Setup -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:col-span-1 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 mb-4">Interview Setup</h3>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Target Role</label>
+              <input id="interview-role" type="text" value="Full-Stack Engineer" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-slate-900 focus:bg-white" />
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Current Skills / Tech Stack</label>
+              <input id="interview-skills" type="text" placeholder="e.g. JavaScript, React, Python, SQL, Git" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white" />
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Career Goal</label>
+              <textarea id="interview-goal" rows="3" placeholder="e.g. I want to become a strong full-stack engineer and get internship/job ready." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white resize-none"></textarea>
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Projects / Experience</label>
+              <textarea id="interview-projects" rows="3" placeholder="e.g. portfolio projects, hackathons, coursework, freelance work, API integrations" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:bg-white resize-none"></textarea>
+            </div>
+
+            <div class="mt-4">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Interview Focus</label>
+              <select id="interview-focus" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-slate-900">
+                <option>Full-Stack</option>
+                <option>Frontend</option>
+                <option>Backend</option>
+                <option>Data Structures & Algorithms</option>
+                <option>System Design</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="start-mock-interview-btn" class="mt-8 w-full py-3 bg-slate-900 text-white font-semibold text-sm rounded-xl hover:bg-black transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-play text-xs"></i>
+            <span>Generate 10 Questions</span>
+          </button>
+        </div>
+
+        <!-- Right: Quiz Panel -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 lg:col-span-2 shadow-sm">
+          <div id="mock-interview-empty" class="h-full min-h-[420px] flex items-center justify-center text-center text-slate-500">
+            <div>
+              <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-800">No Interview Started Yet</h3>
+              <p class="text-xs text-slate-500 mt-2 max-w-md mx-auto">
+                Fill in your skills, target role, and project experience, then click <strong class="text-slate-800">Generate 10 Questions</strong> to begin your mock interview.
+              </p>
+            </div>
+          </div>
+
+          <div id="mock-interview-quiz" class="hidden min-h-[420px]">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-600">Mock Interview</div>
+                <h3 class="text-xl font-extrabold text-slate-900 mt-1">Technical Assessment</h3>
+              </div>
+              <div class="text-right">
+                <div id="mcq-progress" class="text-sm font-bold text-slate-900">1 / 10</div>
+                <span class="text-[11px] font-semibold text-slate-500">Progress</span>
+              </div>
+            </div>
+
+            <div id="mock-question-box" class="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+              <div id="mock-question-label" class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Question 1</div>
+              <h4 id="mock-question-text" class="mt-3 text-lg font-bold text-slate-900 leading-relaxed"></h4>
+            </div>
+
+            <div id="mock-options" class="mt-5 space-y-3"></div>
+
+            <div class="mt-6 flex items-center justify-between gap-3">
+              <div id="mock-feedback" class="text-xs text-slate-500 min-h-[18px]"></div>
+              <button id="mock-next-btn" class="px-5 py-2.5 bg-slate-900 text-white text-xs font-semibold rounded-xl hover:bg-black transition-colors">
+                Next Question
+              </button>
+            </div>
+          </div>
+
+          <div id="mock-interview-results" class="hidden min-h-[420px]">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600">Results</div>
+                <h3 class="text-xl font-extrabold text-slate-900 mt-1">Interview Scorecard</h3>
+              </div>
+              <div class="text-right">
+                <div id="final-score" class="text-3xl font-black text-slate-900">0/10</div>
+                <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Performance</span>
+              </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+                  <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                  <span>Strong Areas</span>
+                </div>
+                <ul id="strong-areas" class="space-y-2 text-xs text-slate-600"></ul>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-3">
+                  <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                  <span>Weak Areas</span>
+                </div>
+                <ul id="weak-areas" class="space-y-2 text-xs text-slate-600"></ul>
+              </div>
+            </div>
+
+            <div class="mt-6 p-5 rounded-xl border border-slate-200 bg-slate-50">
+              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">AI Coaching Insight</h4>
+              <p id="final-insight" class="text-xs text-slate-600 leading-relaxed"></p>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <button id="retake-interview-btn" class="px-5 py-2.5 bg-slate-900 text-white text-xs font-semibold rounded-xl hover:bg-black transition-colors">
+                Retake Interview
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modern Enterprise Footer -->
+  <footer class="bg-white border-t border-slate-200/80 pt-16 pb-12 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 pb-12 border-b border-slate-100">
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center text-xs">
+              <i class="fa-solid fa-shapes"></i>
+            </div>
+            <span class="font-bold text-slate-900 text-sm">SkillBridge AI</span>
+          </div>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            The AI career intelligence ecosystem preparing software engineers and data scientists for top-tier hiring.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Platform Tools</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="#internship" onclick="navigateTo('internship'); return false;" class="hover:text-slate-900">Internship Finder</a></li>
+            <li><a href="#skillgap" onclick="navigateTo('skillgap'); return false;" class="hover:text-slate-900">Skill Gap Analyzer</a></li>
+            <li><a href="#interview" onclick="navigateTo('interview'); return false;" class="hover:text-slate-900">AI Mock Interviews</a></li>
+            <li><a href="#" class="hover:text-slate-900">Salary Estimator</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Resources</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="#" class="hover:text-slate-900">Engineering Roadmaps</a></li>
+            <li><a href="#" class="hover:text-slate-900">System Design Primer</a></li>
+            <li><a href="#" class="hover:text-slate-900">ATS Keyword Library</a></li>
+            <li><a href="#" class="hover:text-slate-900">Interview Cheat Sheets</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Company</h4>
+          <ul class="space-y-2 text-xs text-slate-600">
+            <li><a href="#" class="hover:text-slate-900">About Us</a></li>
+            <li><a href="#" class="hover:text-slate-900">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-slate-900">Terms of Service</a></li>
+            <li><a href="#" class="hover:text-slate-900">Contact Support</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+        <div>&copy; 2026 SkillBridge AI Technologies, Inc. All rights reserved.</div>
+        <div class="flex items-center gap-6">
+          <a href="#" class="hover:text-slate-600"><i class="fa-brands fa-github text-sm"></i></a>
+          <a href="#" class="hover:text-slate-600"><i class="fa-brands fa-x-twitter text-sm"></i></a>
+          <a href="#" class="hover:text-slate-600"><i class="fa-brands fa-linkedin text-sm"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- External Application Script -->
+  <script src="script.js"></script>
+</body>
+</html>
