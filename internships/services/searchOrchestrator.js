@@ -1,27 +1,32 @@
 /**
  * Internship Search Orchestrator
- * Coordinates the full search pipeline:
- * Query builder -> Source adapters -> Validation -> Normalization ->
- * Deduplication -> Eligibility filtering -> Scoring & Ranking -> AI Explanation -> API Response
+ * Coordinates the deep-research and verification pipeline:
+ * Multi-query builder -> Source adapters -> Normalization ->
+ * Layered Deduplication -> Deep Verification -> Hard Eligibility ->
+ * Priority Ranking -> AI Explanation -> Quality Tier Bucketing -> API Response
  */
 
 const { getDefaultAdapters } = require("../adapters");
+const queryBuilder = require("./queryBuilder");
 const normalizationService = require("./normalizationService");
 const deduplicationService = require("./deduplicationService");
+const verificationService = require("./verificationService");
 const eligibilityService = require("./eligibilityService");
 const rankingService = require("./rankingService");
 const aiExplanationService = require("./aiExplanationService");
 const dataStore = require("../storage/dataStore");
+const { VerificationStatus } = require("../types/internshipTypes");
 
 class SearchOrchestrator {
   constructor(adapters = null) {
     this.adapters = adapters || getDefaultAdapters();
-    this.cacheTtlMs = Number(process.env.INTERNSHIP_SEARCH_CACHE_TTL_SECONDS || 1800) * 1000;
+    // Short cache TTL (10 minutes) to ensure fresh results as required
+    this.cacheTtlMs = Number(process.env.INTERNSHIP_SEARCH_CACHE_TTL_SECONDS || 600) * 1000;
     this.searchCache = new Map(); // queryHash -> { timestamp, response }
   }
 
   /**
-   * Executes the full internship search pipeline.
+   * Executes the full deep research & verification search pipeline.
    * @param {Object} query - Validated user profile & filters
    * @param {Object} [options={}]
    * @returns {Promise<Object>} Formatted search response
@@ -43,13 +48,20 @@ class SearchOrchestrator {
       }
     }
 
-    // 2. Query configured adapters in parallel with timeout safety
+    // 2. Generate multi-angle deep research queries from profile
+    const researchPlan = queryBuilder.buildResearchPlan(query);
+
+    // 3. Query configured adapters in parallel with timeout safety
     const sourceStatuses = {};
     const rawListings = [];
 
     const adapterPromises = this.adapters.map(async (adapter) => {
       try {
-        const result = await adapter.search(query, options);
+        const result = await adapter.search({
+          ...query,
+          researchPlan
+        }, options);
+
         sourceStatuses[adapter.name] = {
           status: result.status,
           durationMs: result.durationMs,
@@ -78,32 +90,76 @@ class SearchOrchestrator {
 
     await Promise.allSettled(adapterPromises);
 
-    // 3. Normalization & validation
+    // 4. Normalization & validation
     const normalizedListings = normalizationService.normalizeBatch(rawListings);
 
-    // 4. Layered Deduplication
+    // 5. Layered Deduplication (exact canonical, source+extId, company+title, fuzzy)
     const deduplicatedListings = deduplicationService.deduplicate(normalizedListings);
 
-    // 5. Hard Eligibility Filtering
-    const eligibleListings = eligibilityService.filterAndEnrich(deduplicatedListings, query);
+    // 6. Deep Verification (checks real company, live reachability, closure markers, spam, internship proof)
+    const verifiedListings = await verificationService.verifyBatch(deduplicatedListings, {
+      checkLiveUrl: options.checkLiveUrl !== false
+    });
 
-    // 6. Transparent Multi-Factor Weighted Scoring and Ranking
+    // 7. Hard Eligibility Filtering (excludes non-internships, closed, location/graduation conflicts)
+    const eligibleListings = eligibilityService.filterAndEnrich(verifiedListings, query);
+
+    // 8. Priority Weighted Ranking (Verified first, then strong role match, skills, recency)
     const rankedListings = rankingService.rankListings(eligibleListings, query);
 
-    // 7. AI Match Explanation & Structured Insight Enrichment (top 6 results)
+    // 9. AI Match Explanation & Structured Insight Enrichment (top 6 results)
     const enrichedListings = await aiExplanationService.enrichBatch(rankedListings, query, 6);
 
-    // 8. Persist to data store cache
-    dataStore.saveBatch(enrichedListings);
+    // 10. Quality Threshold & Tier Bucketing
+    // Requirement 6: Use separate sections:
+    // - Best verified matches
+    // - Other relevant opportunities
+    // - Needs confirmation
+    const bestVerified = [];
+    const otherRelevant = [];
+    const needsConfirmation = [];
 
-    // 9. Pagination handling
+    for (const item of enrichedListings) {
+      if (item.verificationStatus === VerificationStatus.VERIFIED && item.score >= 70) {
+        item.qualityTier = "bestVerified";
+        bestVerified.push(item);
+      } else if (item.verificationStatus === VerificationStatus.NEEDS_CONFIRMATION) {
+        item.qualityTier = "needsConfirmation";
+        needsConfirmation.push(item);
+      } else if (item.score >= 50) {
+        item.qualityTier = "otherRelevant";
+        otherRelevant.push(item);
+      } else {
+        // Below minimum quality threshold: exclude weak matches to avoid filling result page with noise
+      }
+    }
+
+    // Unified list ordered by quality tiers: Best Verified -> Other Relevant -> Needs Confirmation
+    const finalDisplayListings = [
+      ...bestVerified,
+      ...otherRelevant,
+      ...needsConfirmation
+    ];
+
+    // 11. Persist to data store cache
+    dataStore.saveBatch(finalDisplayListings);
+
+    // 12. Pagination handling
     const page = Math.max(1, parseInt(options.page || 1, 10));
     const pageSize = Math.max(1, Math.min(50, parseInt(options.pageSize || 24, 10)));
-    const totalCount = enrichedListings.length;
+    const totalCount = finalDisplayListings.length;
     const totalPages = Math.ceil(totalCount / pageSize) || 1;
-    const paginatedListings = enrichedListings.slice((page - 1) * pageSize, page * pageSize);
+    const paginatedListings = finalDisplayListings.slice((page - 1) * pageSize, page * pageSize);
 
     const pipelineDuration = Date.now() - pipelineStartTime;
+
+    // Quality threshold notification message
+    let qualityNote = null;
+    if (bestVerified.length > 0 && bestVerified.length < 5) {
+      qualityNote = `Prioritizing accuracy over volume: Showing ${bestVerified.length} verified high-confidence internship matches. Unverified or low-relevance postings were filtered out.`;
+    } else if (bestVerified.length === 0 && finalDisplayListings.length > 0) {
+      qualityNote = `Notice: Found ${finalDisplayListings.length} potential matches, but company career page verification is pending confirmation.`;
+    }
 
     const response = {
       query: {
@@ -112,18 +168,31 @@ class SearchOrchestrator {
         goal: query.goal || "",
         workplace: query.workplace || "Any",
         education: query.education || "",
-        batch: query.batch || "Current Student"
+        batch: query.batch || "Current Student",
+        graduationYear: query.graduationYear || ""
       },
       results: paginatedListings,
+      sections: {
+        bestVerified: bestVerified.slice(0, 12),
+        otherRelevant: otherRelevant.slice(0, 12),
+        needsConfirmation: needsConfirmation.slice(0, 12)
+      },
+      counts: {
+        total: totalCount,
+        bestVerified: bestVerified.length,
+        otherRelevant: otherRelevant.length,
+        needsConfirmation: needsConfirmation.length
+      },
       totalCount,
       page,
       pageSize,
       totalPages,
       sourceStatuses,
+      qualityNote,
       searchedAt: new Date().toISOString(),
       searchDurationMs: pipelineDuration,
       isCached: false,
-      summary: `Discovered ${totalCount} verified roles matching your profile.`
+      summary: `Discovered ${totalCount} verified roles matching your profile (${bestVerified.length} high-confidence verified).`
     };
 
     // Cache the response
@@ -157,7 +226,9 @@ class SearchOrchestrator {
       query.goal || "",
       query.workplace || "Any",
       query.education || "",
-      query.batch || ""
+      query.batch || "",
+      query.graduationYear || "",
+      query.location || ""
     ].join("|").toLowerCase();
     return key;
   }

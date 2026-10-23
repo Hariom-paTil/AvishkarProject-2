@@ -160,28 +160,36 @@
 | `internships/adapters/linkedInAdapter.js` | Approved Partner API integration only. If unconfigured, cleanly returns `NOT_CONFIGURED`. |
 | `internships/adapters/internshalaAdapter.js` | Approved Partner API integration only. If unconfigured, cleanly returns `NOT_CONFIGURED`. |
 | `internships/adapters/index.js` | Adapter registry and factory. |
+| `internships/services/queryBuilder.js` | Deep Research Query Builder: generates multi-angle query variations (role exact, primary tech skill, skill pairs, workplace preference, graduation year). |
+| `internships/services/verificationService.js` | Deep Verification Engine: live HTTP reachability check, spam phrase filtering, closed/expired marker detection, and verification status assignment (`Verified`, `Recently discovered`, `Needs confirmation`). |
 | `internships/services/normalizationService.js` | Transforms raw adapter results to standard schema and rejects malformed records. |
 | `internships/services/deduplicationService.js` | 4-stage layered deduplication with intelligent metadata merging. |
-| `internships/services/eligibilityService.js` | Hard eligibility filtering (role type, status, location, graduation year, degree level). |
-| `internships/services/rankingService.js` | Transparent weighted scoring algorithm (0 to 100 points) and factor explanation generator. |
+| `internships/services/eligibilityService.js` | Hard eligibility filtering (mandatory skills, country conflicts, role type, status, location, graduation year, degree level). |
+| `internships/services/rankingService.js` | Transparent weighted scoring algorithm prioritizing verified listings and generating honest, evidence-backed match explanations. |
 | `internships/services/aiExplanationService.js` | Concise AI explanation enrichment with content-hash caching and deterministic fallback. |
-| `internships/services/searchOrchestrator.js` | Coordinates end-to-end search pipeline with caching, concurrency control, and status tracking. |
+| `internships/services/searchOrchestrator.js` | Coordinates end-to-end search pipeline with caching, concurrency control, verification batching, and 3-section quality tier bucketing. |
 | `internships/storage/dataStore.js` | Persistent disk-backed JSON cache and user bookmark store. |
 | `tests/internships.test.js` | Unit test suite covering utilities, adapters, normalization, deduplication, eligibility, and ranking. |
 | `tests/orchestrator.test.js` | Integration test suite covering parallel source execution, partial failure tolerance, and caching. |
+| `tests/verification.test.js` | Verification test suite covering multi-angle query generation, spam/closure detection, hard filters, honest explanations, and quality tier bucketing. |
 
 ---
 
 ## 5. The Full Internship Search Pipeline
 
-The search system operates as a strict multi-stage deterministic pipeline:
+The search system operates as a strict multi-stage deterministic pipeline where **accuracy is prioritized over result quantity**:
 
 ```
 User Profile & Filters
        │
        ▼
-[Stage 1: Search Query Builder]
-       │  Generates query tokens, skill terms, and role goals
+[Stage 1: Deep Research Query Builder]
+       │  Generates multi-angle query variations from profile:
+       │  - Angle 1: Exact target role + intern qualifier
+       │  - Angle 2: Primary tech skill + target role
+       │  - Angle 3: Skill-pair combination
+       │  - Angle 4: Workplace preference (e.g. Remote)
+       │  - Angle 5: Graduation year / batch qualifier
        ▼
 [Stage 2: Source Adapters (Parallel Execution)]
        │  Executes Greenhouse, Lever, Ashby, Remotive, LinkedIn*, Internshala*
@@ -200,30 +208,49 @@ User Profile & Filters
        │  Layer 2: Exact source + external listing ID match
        │  Layer 3: Exact normalized company + title + location match
        │  Layer 4: Conservative fuzzy match (company, title similarity >= 88%)
-       │  -> Merges duplicates preserving all source references and complete data
+       │  -> Merges duplicates prioritizing direct company application pages
        ▼
-[Stage 5: Eligibility Filtering]
-       │  - Excludes closed / expired listings
-       │  - Excludes senior roles when searching internships
-       │  - Validates remote / workplace preference conflicts
+[Stage 5: Deep Verification Process (verificationService.js)]
+       │  - Live HTTP reachability check (HEAD / GET range request)
+       │  - Rejects placeholder/spam company names ("Confidential", "Anonymous", etc.)
+       │  - Rejects closed/expired listings ("no longer accepting applications", etc.)
+       │  - Rejects senior roles masquerading as internships
+       │  - Assigns Verification Status:
+       │    * Verified: live ATS/career board checked and fully active
+       │    * Recently discovered: source exists, active status recently detected
+       │    * Needs confirmation: key info (deadline, eligibility, stipend) unstated
+       ▼
+[Stage 6: Hard Eligibility & Suitability Filtering]
+       │  - Excludes roles where mandatory skills are clearly missing
+       │  - Excludes explicit onsite country conflicts
+       │  - Excludes non-internship / closed / expired listings
        │  - Validates graduation year requirements
-       │  - Validates education degree / clearance requirements
-       │  - Retains listings with unstated requirements, tagging uncertainties
        ▼
-[Stage 6: Transparent Weighted Ranking]
-       │  Scores each listing on 8 distinct factors (Total 100 points)
-       │  Generates factual match explanation referencing real factors
+[Stage 7: Weighted Ranking & Honest Match Explanations]
+       │  Priority 1: Verified and active internship (+10 bonus)
+       │  Priority 2: Strong role match (avoids keyword stuffing)
+       │  Priority 3: Required skill match
+       │  Priority 4: Location / remote preference fit
+       │  Priority 5: Explicit eligibility fit
+       │  Priority 6: Recent listing
+       │  Priority 7: Complete description and direct application link
+       │  Honest Match Explanation:
+       │  "Verified on [source]. Matches your [skills]. [Workplace]. [Missing skills]. [Eligibility notice]."
        ▼
-[Stage 7: AI Match Explanation & Enrichment]
-       │  Enriches top results with structured LLM insights
-       │  Content hash caching + deterministic fallback
+[Stage 8: Quality Tier Bucketing & Threshold Alerting]
+       │  Partitions results into 3 transparent UI sections:
+       │  1. Best Verified Matches (evidence-backed ATS postings)
+       │  2. Other Relevant Opportunities (accessible web & partner discoveries)
+       │  3. Needs Confirmation (roles needing manual student verification)
+       │  Displays Quality Threshold banner when verified matches are selective.
        ▼
-[Stage 8: Caching & API Response]
-       │  Persists listings to disk-backed store with TTL
-       │  Returns results, source statuses, duration, pagination, and cache status
+[Stage 9: Caching & API Response]
+       │  Persists listings to disk-backed store with short TTL
+       │  Returns results, section buckets, quality note, source statuses, duration, and cache status
        ▼
-[Stage 9: Frontend Results Display]
-          Interactive cards, source status dashboard, sorting, and filters
+[Stage 10: Dynamic UI Rendering (results.html & script.js)]
+       │  Renders 3 distinct verification sections, quality threshold assurance,
+       │  verification badges, and interactive filter toolbar
 ```
 
 ---

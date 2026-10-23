@@ -176,6 +176,18 @@ const opportunitySearchService = {
       if (resData.ok && resData.data && Array.isArray(resData.data.opportunities)) {
         return {
           data: resData.data.opportunities,
+          sections: resData.data.sections || {
+            bestVerified: [],
+            otherRelevant: [],
+            needsConfirmation: []
+          },
+          counts: resData.data.counts || {
+            total: resData.data.opportunities.length,
+            bestVerified: 0,
+            otherRelevant: 0,
+            needsConfirmation: 0
+          },
+          qualityNote: resData.data.qualityNote || null,
           summary: resData.data.searchSummary,
           sourceStatuses: resData.data.sourceStatuses || {},
           searchDurationMs: resData.data.searchDurationMs || 0,
@@ -189,12 +201,22 @@ const opportunitySearchService = {
       console.error('Internship search API request failed:', error);
     }
 
-    return { data: [], fallback: true, sourceStatuses: {}, searchDurationMs: 0 };
+    return {
+      data: [],
+      sections: { bestVerified: [], otherRelevant: [], needsConfirmation: [] },
+      counts: { total: 0, bestVerified: 0, otherRelevant: 0, needsConfirmation: 0 },
+      qualityNote: null,
+      fallback: true,
+      sourceStatuses: {},
+      searchDurationMs: 0
+    };
   }
 };
 
 let currentAllOpportunities = [];
 let currentFilteredOpportunities = [];
+let currentSections = { bestVerified: [], otherRelevant: [], needsConfirmation: [] };
+let currentQualityNote = null;
 let currentSourceStatuses = {};
 let currentSearchQuery = '';
 let currentWorkModeFilter = 'all';
@@ -292,6 +314,69 @@ function resetOpportunityFilters() {
 window.resetOpportunityFilters = resetOpportunityFilters;
 
 /**
+ * Evaluates whether an opportunity matches active user filters
+ */
+function matchesOpportunityFilter(item) {
+  // 1. Text Search Query Filter
+  if (currentSearchQuery) {
+    const title = (item.title || '').toLowerCase();
+    const comp = (item.company || '').toLowerCase();
+    const skills = (item.matchingSkills || []).join(' ').toLowerCase();
+    const loc = (item.location || '').toLowerCase();
+    const matches = title.includes(currentSearchQuery) ||
+                    comp.includes(currentSearchQuery) ||
+                    skills.includes(currentSearchQuery) ||
+                    loc.includes(currentSearchQuery);
+    if (!matches) return false;
+  }
+
+  // 2. Work Mode Filter
+  if (currentWorkModeFilter !== 'all') {
+    const mode = (item.workMode || '').toLowerCase();
+    if (mode !== currentWorkModeFilter.toLowerCase()) return false;
+  }
+
+  // 3. Source Filter
+  if (currentSourceFilter === 'saved') {
+    if (!savedListingIds.has(item.id)) return false;
+  } else if (currentSourceFilter !== 'all') {
+    const src = (item.source || '').toLowerCase();
+    if (!src.includes(currentSourceFilter.toLowerCase())) return false;
+  }
+
+  // 4. Freshness Filter (days)
+  if (currentFreshnessFilter !== 'all') {
+    const maxDays = parseInt(currentFreshnessFilter, 10);
+    const cutoffMs = Date.now() - (maxDays * 24 * 60 * 60 * 1000);
+    if (!item.postedDate) return false;
+    const t = new Date(item.postedDate).getTime();
+    if (isNaN(t) || t < cutoffMs) return false;
+  }
+
+  return true;
+}
+
+/**
+ * Sorts opportunities by current active sort order
+ */
+function sortOpportunityItems(items = []) {
+  const sorted = [...items];
+  if (currentSortOrder === 'newest') {
+    sorted.sort((a, b) => {
+      const tA = a.postedDate ? new Date(a.postedDate).getTime() : 0;
+      const tB = b.postedDate ? new Date(b.postedDate).getTime() : 0;
+      return tB - tA;
+    });
+  } else if (currentSortOrder === 'completeness') {
+    sorted.sort((a, b) => (b.completenessScore || 0) - (a.completenessScore || 0));
+  } else {
+    // best_match (default)
+    sorted.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
+  }
+  return sorted;
+}
+
+/**
  * Filter and sort opportunities
  */
 function applyAllOpportunityFilters() {
@@ -305,66 +390,7 @@ function applyAllOpportunityFilters() {
   if (freshSelect) currentFreshnessFilter = freshSelect.value;
   if (sortSelect) currentSortOrder = sortSelect.value;
 
-  let filtered = [...currentAllOpportunities];
-
-  // 1. Text Search Query Filter
-  if (currentSearchQuery) {
-    filtered = filtered.filter(item => {
-      const title = (item.title || '').toLowerCase();
-      const comp = (item.company || '').toLowerCase();
-      const skills = (item.matchingSkills || []).join(' ').toLowerCase();
-      const loc = (item.location || '').toLowerCase();
-      return title.includes(currentSearchQuery) ||
-             comp.includes(currentSearchQuery) ||
-             skills.includes(currentSearchQuery) ||
-             loc.includes(currentSearchQuery);
-    });
-  }
-
-  // 2. Work Mode Filter
-  if (currentWorkModeFilter !== 'all') {
-    filtered = filtered.filter(item => {
-      const mode = (item.workMode || '').toLowerCase();
-      return mode === currentWorkModeFilter.toLowerCase();
-    });
-  }
-
-  // 3. Source Filter
-  if (currentSourceFilter === 'saved') {
-    filtered = filtered.filter(item => savedListingIds.has(item.id));
-  } else if (currentSourceFilter !== 'all') {
-    filtered = filtered.filter(item => {
-      const src = (item.source || '').toLowerCase();
-      return src.includes(currentSourceFilter.toLowerCase());
-    });
-  }
-
-  // 4. Freshness Filter (days)
-  if (currentFreshnessFilter !== 'all') {
-    const maxDays = parseInt(currentFreshnessFilter, 10);
-    const cutoffMs = Date.now() - (maxDays * 24 * 60 * 60 * 1000);
-    filtered = filtered.filter(item => {
-      if (!item.postedDate) return false;
-      const t = new Date(item.postedDate).getTime();
-      return !isNaN(t) && t >= cutoffMs;
-    });
-  }
-
-  // 5. Sorting
-  if (currentSortOrder === 'newest') {
-    filtered.sort((a, b) => {
-      const tA = a.postedDate ? new Date(a.postedDate).getTime() : 0;
-      const tB = b.postedDate ? new Date(b.postedDate).getTime() : 0;
-      return tB - tA;
-    });
-  } else if (currentSortOrder === 'completeness') {
-    filtered.sort((a, b) => (b.completenessScore || 0) - (a.completenessScore || 0));
-  } else {
-    // best_match (default)
-    filtered.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
-  }
-
-  currentFilteredOpportunities = filtered;
+  currentFilteredOpportunities = sortOpportunityItems(currentAllOpportunities.filter(matchesOpportunityFilter));
 
   // Update UI stats
   const countBadge = document.getElementById('results-count-badge');
@@ -377,8 +403,9 @@ function applyAllOpportunityFilters() {
     else resetBtn.classList.add('hidden');
   }
 
+  const count = currentFilteredOpportunities.length;
   if (countBadge) {
-    countBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'Role' : 'Roles'} Available`;
+    countBadge.textContent = `${count} ${count === 1 ? 'Role' : 'Roles'} Available`;
   }
   if (feedbackText) {
     feedbackText.textContent = isFiltered
@@ -463,15 +490,238 @@ function renderSourceStatusBar(statuses = {}, durationMs = 0, isCached = false, 
 }
 
 /**
- * Render the filtered subset of opportunities
+ * Renders a single normalized opportunity card with verification status and honest explanations
+ */
+function renderOpportunityCard(item) {
+  const isSaved = savedListingIds.has(item.id);
+  const urls = item.searchUrls || {};
+  const sourceLower = (item.source || '').toLowerCase();
+
+  // Verification Status Badge
+  const vStatus = item.verificationStatus || 'Recently discovered';
+  let verificationBadge = '<span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-sky-50 text-sky-800 border border-sky-300 flex items-center gap-1.5 shadow-2xs" title="Discovered via career feed; active status recently detected"><i class="fa-solid fa-clock-rotate-left text-sky-600"></i> Recently Discovered</span>';
+  if (vStatus === 'Verified') {
+    verificationBadge = '<span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 shadow-2xs" title="Verified against live ATS or direct career board"><i class="fa-solid fa-circle-check text-emerald-600"></i> Verified</span>';
+  } else if (vStatus === 'Needs confirmation') {
+    verificationBadge = '<span class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-300 flex items-center gap-1.5 shadow-2xs" title="Key criteria such as deadline, eligibility, or stipend need manual confirmation"><i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Needs Confirmation</span>';
+  }
+
+  // Platform styling
+  let sourceBadgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+  let sourceIcon = 'fa-solid fa-briefcase';
+  if (sourceLower.includes('greenhouse')) {
+    sourceBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+    sourceIcon = 'fa-solid fa-seedling';
+  } else if (sourceLower.includes('lever')) {
+    sourceBadgeClass = 'bg-indigo-50 text-indigo-800 border-indigo-200';
+    sourceIcon = 'fa-solid fa-building';
+  } else if (sourceLower.includes('ashby')) {
+    sourceBadgeClass = 'bg-sky-50 text-sky-800 border-sky-200';
+    sourceIcon = 'fa-solid fa-cube';
+  } else if (sourceLower.includes('remotive')) {
+    sourceBadgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
+    sourceIcon = 'fa-solid fa-laptop-code';
+  } else if (sourceLower.includes('linkedin')) {
+    sourceBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
+    sourceIcon = 'fa-brands fa-linkedin';
+  }
+
+  // Work Mode styling
+  const workMode = (item.workMode || 'unknown').toLowerCase();
+  let workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">Flexible</span>';
+  if (workMode === 'remote') {
+    workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200"><i class="fa-solid fa-house-laptop text-[10px] mr-1"></i>Remote</span>';
+  } else if (workMode === 'hybrid') {
+    workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-200"><i class="fa-solid fa-arrows-split-up-and-left text-[10px] mr-1"></i>Hybrid</span>';
+  } else if (workMode === 'onsite') {
+    workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-semibold border border-sky-200"><i class="fa-solid fa-building text-[10px] mr-1"></i>On-site</span>';
+  }
+
+  // Matching skills pills
+  const matchingPills = (item.matchingSkills || []).slice(0, 4).map(skill => 
+    `<span class="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md font-semibold">${skill}</span>`
+  ).join('');
+
+  // Missing skills pills
+  const missingPills = (item.missingSkills || []).slice(0, 2).map(skill =>
+    `<span class="text-[10px] px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md font-medium"><i class="fa-solid fa-triangle-exclamation text-[9px] mr-1"></i>${skill}</span>`
+  ).join('');
+
+  // Uncertainties
+  const uncertaintyPills = (item.uncertainties || []).slice(0, 2).map(unc =>
+    `<span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-md font-medium">${unc}</span>`
+  ).join('');
+
+  // Score Breakdown attributes
+  const breakdown = item.scoreBreakdown || {};
+  const applyUrl = item.applyUrl || item.canonicalUrl || '#';
+  const checkedDate = item.verifiedAt ? new Date(item.verifiedAt).toLocaleDateString() : (item.postedDateDisplay || 'Recently');
+
+  return `
+    <div class="opportunity-card bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group relative">
+      
+      <div>
+        <!-- Top Row: Verification Badge, Source, WorkMode, Score & Bookmark -->
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            ${verificationBadge}
+            <span class="text-[11px] font-bold px-2 py-1 rounded-lg border flex items-center gap-1.5 ${sourceBadgeClass}">
+              <i class="${sourceIcon}"></i> ${item.source || 'Career Board'}
+            </span>
+            ${workModeBadge}
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-black px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 shadow-2xs" title="Multi-factor Profile Fit Score">
+              ${item.matchPercentage || 85}% Match
+            </span>
+
+            <button
+              data-save-id="${item.id}"
+              onclick="toggleSaveOpportunity('${item.id}', event)"
+              title="${isSaved ? 'Remove from saved' : 'Save opportunity'}"
+              class="w-8 h-8 rounded-xl ${isSaved ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-slate-50 text-slate-400 hover:text-slate-700 border border-slate-200'} flex items-center justify-center transition-all"
+            >
+              <i class="${isSaved ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'} text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Company Name with Link if present -->
+        <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+          <i class="fa-solid fa-building text-[10px] text-slate-400"></i>
+          ${item.companyWebsite ? `
+            <a href="${item.companyWebsite}" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 truncate underline-offset-2 hover:underline">
+              ${item.company}
+            </a>
+          ` : `<span class="truncate">${item.company}</span>`}
+          <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]" title="Authenticated Direct Source Feed"></i>
+        </div>
+
+        <!-- Role Title -->
+        <h3 class="text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
+          ${item.title}
+        </h3>
+
+        <!-- Badges Bar: Location, Stipend, Duration, Checked Date -->
+        <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium" title="Role Location">
+            <i class="fa-solid fa-location-dot text-[10px] mr-1 text-slate-400"></i>${item.location || 'Location not specified'}
+          </span>
+          ${item.stipend && !item.stipend.toLowerCase().includes('unpaid') && !item.stipend.toLowerCase().includes('not disclosed') ? `
+            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-100">
+              <i class="fa-solid fa-money-bill-wave text-[10px] mr-1"></i>${item.stipend}
+            </span>
+          ` : ''}
+          ${item.duration && !item.duration.toLowerCase().includes('not specified') ? `
+            <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-medium border border-sky-100">
+              <i class="fa-regular fa-clock text-[10px] mr-1"></i>${item.duration}
+            </span>
+          ` : ''}
+          <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-medium" title="Last checked verification timestamp">
+            <i class="fa-solid fa-arrows-rotate text-[10px] mr-1 text-slate-400"></i>Checked: ${checkedDate}
+          </span>
+        </div>
+
+        <!-- Fact-based Match Explanation Box -->
+        <div class="mt-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
+          <div class="flex items-start gap-1.5">
+            <i class="fa-solid fa-shield-halved text-indigo-600 text-xs mt-0.5 shrink-0"></i>
+            <span>${item.whyItMatches || item.relevanceExplanation || 'Profile aligns with technical requirements.'}</span>
+          </div>
+        </div>
+
+        <!-- Matching and Missing Skills Section -->
+        <div class="mt-4 space-y-2">
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Matching Skills:</span>
+            <div class="flex flex-wrap gap-1">${matchingPills || '<span class="text-xs text-slate-400">Software engineering fundamentals</span>'}</div>
+          </div>
+
+          ${(missingPills || uncertaintyPills) ? `
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Unconfirmed / Gaps:</span>
+              <div class="flex flex-wrap gap-1">${missingPills} ${uncertaintyPills}</div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Transparent Score Factors Dropdown / Indicator -->
+        ${breakdown.roleRelevance !== undefined ? `
+          <details class="mt-3 pt-2 text-[11px] text-slate-500 border-t border-slate-100">
+            <summary class="cursor-pointer font-bold text-slate-600 hover:text-slate-900 flex items-center justify-between">
+              <span>Score Breakdown (${item.matchPercentage} pts)</span>
+              <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </summary>
+            <div class="grid grid-cols-2 gap-x-2 gap-y-1 mt-2 text-[10px] bg-slate-50 p-2 rounded-xl border border-slate-100">
+              <div>Verification Bonus: <b class="text-slate-800">${breakdown.verification || 10}/10</b></div>
+              <div>Role Relevance: <b class="text-slate-800">${breakdown.roleRelevance}/30</b></div>
+              <div>Required Skills: <b class="text-slate-800">${breakdown.requiredSkills}/25</b></div>
+              <div>Preferred Skills: <b class="text-slate-800">${breakdown.preferredSkills || 5}/10</b></div>
+              <div>Location/Remote: <b class="text-slate-800">${breakdown.locationRemote}/10</b></div>
+              <div>Eligibility Fit: <b class="text-slate-800">${breakdown.eligibility}/10</b></div>
+              <div>Posting Recency: <b class="text-slate-800">${breakdown.recency}/8</b></div>
+              <div>Completeness: <b class="text-slate-800">${breakdown.completeness}/4</b></div>
+            </div>
+          </details>
+        ` : ''}
+      </div>
+
+      <!-- Action Section: Direct Apply Button + Search Platforms -->
+      <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
+        <!-- Primary Direct Apply Button -->
+        <a
+          href="${applyUrl}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full py-2.5 px-4 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-black transition-all flex items-center justify-center gap-2 shadow-sm"
+        >
+          <span>Apply Directly on ${item.source}</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+
+        <!-- Cross-platform Research Links -->
+        <div>
+          <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Research Similar Postings:</span>
+          <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold text-center">
+            ${urls.linkedIn ? `
+              <a href="${urls.linkedIn}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors flex items-center justify-center gap-1">
+                <i class="fa-brands fa-linkedin text-xs"></i> LinkedIn
+              </a>
+            ` : ''}
+            ${urls.unstop ? `
+              <a href="${urls.unstop}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
+                <i class="fa-solid fa-trophy text-xs"></i> Unstop
+              </a>
+            ` : urls.indeed ? `
+              <a href="${urls.indeed}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i> Indeed
+              </a>
+            ` : ''}
+            ${urls.googleJobs ? `
+              <a href="${urls.googleJobs}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center gap-1">
+                <i class="fa-brands fa-google text-xs"></i> Google
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+/**
+ * Render the filtered opportunities organized into 3 transparent verification sections:
+ * 1. Best Verified Matches
+ * 2. Other Relevant Opportunities
+ * 3. Needs Confirmation
  */
 function renderOpportunitiesList() {
-  const container = document.getElementById('internship-cards-grid');
+  const container = document.getElementById('internship-results');
   if (!container) return;
 
-  const list = currentFilteredOpportunities;
-
-  if (list.length === 0) {
+  if (currentFilteredOpportunities.length === 0) {
     container.innerHTML = `
       <div class="col-span-full bg-white border border-slate-200 rounded-3xl p-10 text-center shadow-sm">
         <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3 text-xl">
@@ -492,212 +742,102 @@ function renderOpportunitiesList() {
     return;
   }
 
-  container.innerHTML = list.map(item => {
-    const isSaved = savedListingIds.has(item.id);
-    const urls = item.searchUrls || {};
-    const sourceLower = (item.source || '').toLowerCase();
-    
-    // Platform styling
-    let sourceBadgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
-    let sourceIcon = 'fa-solid fa-briefcase';
-    if (sourceLower.includes('greenhouse')) {
-      sourceBadgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-      sourceIcon = 'fa-solid fa-seedling';
-    } else if (sourceLower.includes('lever')) {
-      sourceBadgeClass = 'bg-indigo-50 text-indigo-800 border-indigo-200';
-      sourceIcon = 'fa-solid fa-building';
-    } else if (sourceLower.includes('ashby')) {
-      sourceBadgeClass = 'bg-sky-50 text-sky-800 border-sky-200';
-      sourceIcon = 'fa-solid fa-cube';
-    } else if (sourceLower.includes('remotive')) {
-      sourceBadgeClass = 'bg-purple-50 text-purple-700 border-purple-200';
-      sourceIcon = 'fa-solid fa-laptop-code';
-    } else if (sourceLower.includes('linkedin')) {
-      sourceBadgeClass = 'bg-blue-50 text-blue-700 border-blue-200';
-      sourceIcon = 'fa-brands fa-linkedin';
-    }
+  // Partition current filtered opportunities into the three quality sections
+  const bestVerified = sortOpportunityItems(
+    (currentSections.bestVerified && currentSections.bestVerified.length > 0
+      ? currentSections.bestVerified
+      : currentAllOpportunities.filter(o => o.qualityTier === 'bestVerified' || o.verificationStatus === 'Verified')
+    ).filter(matchesOpportunityFilter)
+  );
 
-    // Work Mode styling
-    const workMode = (item.workMode || 'unknown').toLowerCase();
-    let workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">Office / Flexible</span>';
-    if (workMode === 'remote') {
-      workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200"><i class="fa-solid fa-house-laptop text-[10px] mr-1"></i>Remote</span>';
-    } else if (workMode === 'hybrid') {
-      workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 font-semibold border border-purple-200"><i class="fa-solid fa-arrows-split-up-and-left text-[10px] mr-1"></i>Hybrid</span>';
-    } else if (workMode === 'onsite') {
-      workModeBadge = '<span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-semibold border border-sky-200"><i class="fa-solid fa-building text-[10px] mr-1"></i>On-site</span>';
-    }
+  const needsConfirmation = sortOpportunityItems(
+    (currentSections.needsConfirmation && currentSections.needsConfirmation.length > 0
+      ? currentSections.needsConfirmation
+      : currentAllOpportunities.filter(o => o.qualityTier === 'needsConfirmation' || o.verificationStatus === 'Needs confirmation')
+    ).filter(matchesOpportunityFilter)
+  );
 
-    // Matching skills pills
-    const matchingPills = (item.matchingSkills || []).slice(0, 4).map(skill => 
-      `<span class="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md font-semibold">${skill}</span>`
-    ).join('');
+  const bestIds = new Set(bestVerified.map(o => o.id));
+  const needsIds = new Set(needsConfirmation.map(o => o.id));
+  const otherRelevant = currentFilteredOpportunities.filter(o => !bestIds.has(o.id) && !needsIds.has(o.id));
 
-    // Missing skills pills
-    const missingPills = (item.missingSkills || []).slice(0, 2).map(skill =>
-      `<span class="text-[10px] px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-md font-medium"><i class="fa-solid fa-triangle-exclamation text-[9px] mr-1"></i>${skill}</span>`
-    ).join('');
-
-    // Uncertainties
-    const uncertaintyPills = (item.uncertainties || []).slice(0, 1).map(unc =>
-      `<span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 rounded-md font-medium">${unc}</span>`
-    ).join('');
-
-    // Score Breakdown attributes
-    const breakdown = item.scoreBreakdown || {};
-
-    const applyUrl = item.applyUrl || item.canonicalUrl || '#';
-
-    return `
-      <div class="opportunity-card bg-white border border-slate-200 rounded-3xl p-6 hover:shadow-xl hover:border-slate-300 transition-all flex flex-col justify-between group relative">
-        
-        <div>
-          <!-- Top Row: Source, WorkMode, Score & Bookmark -->
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-[11px] font-bold px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${sourceBadgeClass}">
-                <i class="${sourceIcon}"></i> ${item.source || 'Verified Role'}
-              </span>
-              ${workModeBadge}
+  container.innerHTML = `
+    <div class="space-y-12">
+      <!-- Section 1: Best Verified Matches -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shadow-2xs">
+              <i class="fa-solid fa-shield-check"></i>
             </div>
-
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-black px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 shadow-xs" title="Multi-factor Profile Fit Score">
-                ${item.matchPercentage || 85}% Match
-              </span>
-
-              <button
-                data-save-id="${item.id}"
-                onclick="toggleSaveOpportunity('${item.id}', event)"
-                title="${isSaved ? 'Remove from saved' : 'Save opportunity'}"
-                class="w-8 h-8 rounded-xl ${isSaved ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-slate-50 text-slate-400 hover:text-slate-700 border border-slate-200'} flex items-center justify-center transition-all"
-              >
-                <i class="${isSaved ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'} text-xs"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Company Name with Link if present -->
-          <div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-            <i class="fa-solid fa-building text-[10px] text-slate-400"></i>
-            ${item.companyWebsite ? `
-              <a href="${item.companyWebsite}" target="_blank" rel="noopener noreferrer" class="hover:text-indigo-600 truncate underline-offset-2 hover:underline">
-                ${item.company}
-              </a>
-            ` : `<span class="truncate">${item.company}</span>`}
-            <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]" title="Verified Recruiter Feed"></i>
-          </div>
-
-          <!-- Role Title -->
-          <h3 class="text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
-            ${item.title}
-          </h3>
-
-          <!-- Badges Bar: Location, Stipend, Duration, Posted Date -->
-          <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
-            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium" title="Role Location">
-              <i class="fa-solid fa-location-dot text-[10px] mr-1 text-slate-400"></i>${item.location || 'Location not specified'}
-            </span>
-            ${item.stipend && !item.stipend.toLowerCase().includes('unpaid') && !item.stipend.toLowerCase().includes('not disclosed') ? `
-              <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-100">
-                <i class="fa-solid fa-money-bill-wave text-[10px] mr-1"></i>${item.stipend}
-              </span>
-            ` : ''}
-            ${item.duration && !item.duration.toLowerCase().includes('not specified') ? `
-              <span class="px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 font-medium border border-sky-100">
-                <i class="fa-regular fa-clock text-[10px] mr-1"></i>${item.duration}
-              </span>
-            ` : ''}
-            <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-medium">
-              <i class="fa-regular fa-calendar text-[10px] mr-1"></i>${item.postedDateDisplay || 'Date not provided'}
-            </span>
-          </div>
-
-          <!-- Fact-based Match Explanation Box -->
-          <div class="mt-3.5 p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium">
-            <div class="flex items-start gap-1.5">
-              <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 text-xs mt-0.5 shrink-0"></i>
-              <span>${item.whyItMatches || item.relevanceExplanation || 'Profile aligns with technical requirements.'}</span>
-            </div>
-          </div>
-
-          <!-- Matching and Missing Skills Section -->
-          <div class="mt-4 space-y-2">
             <div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Matching Skills:</span>
-              <div class="flex flex-wrap gap-1">${matchingPills || '<span class="text-xs text-slate-400">Software engineering fundamentals</span>'}</div>
+              <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                Best Verified Matches
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">${bestVerified.length}</span>
+              </h3>
+              <p class="text-xs text-slate-500">Live verified company career boards and active applicant tracking portals.</p>
             </div>
+          </div>
+        </div>
+        ${bestVerified.length > 0 ? `
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${bestVerified.map(renderOpportunityCard).join('')}
+          </div>
+        ` : `
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center gap-3">
+            <i class="fa-solid fa-circle-info text-slate-400"></i>
+            <span>SkillBridge found limited direct company board postings passing strict verification for this specific filter set. See other relevant opportunities below.</span>
+          </div>
+        `}
+      </section>
 
-            ${(missingPills || uncertaintyPills) ? `
+      <!-- Section 2: Other Relevant Opportunities (if any) -->
+      ${otherRelevant.length > 0 ? `
+        <section class="space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shadow-2xs">
+                <i class="fa-solid fa-compass"></i>
+              </div>
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Unconfirmed / Gaps:</span>
-                <div class="flex flex-wrap gap-1">${missingPills} ${uncertaintyPills}</div>
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  Other Relevant Opportunities
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">${otherRelevant.length}</span>
+                </h3>
+                <p class="text-xs text-slate-500">Discovered matching roles from accessible internship feeds and remote boards.</p>
               </div>
-            ` : ''}
-          </div>
-
-          <!-- Transparent Score Factors Dropdown / Indicator -->
-          ${breakdown.roleRelevance !== undefined ? `
-            <details class="mt-3 pt-2 text-[11px] text-slate-500 border-t border-slate-100">
-              <summary class="cursor-pointer font-bold text-slate-600 hover:text-slate-900 flex items-center justify-between">
-                <span>Score Breakdown (${item.matchPercentage} pts)</span>
-                <i class="fa-solid fa-chevron-down text-[10px]"></i>
-              </summary>
-              <div class="grid grid-cols-2 gap-x-2 gap-y-1 mt-2 text-[10px] bg-slate-50 p-2 rounded-xl border border-slate-100">
-                <div>Role Relevance: <b class="text-slate-800">${breakdown.roleRelevance}/30</b></div>
-                <div>Required Skills: <b class="text-slate-800">${breakdown.requiredSkills}/25</b></div>
-                <div>Location/Remote: <b class="text-slate-800">${breakdown.locationRemote}/10</b></div>
-                <div>Eligibility Fit: <b class="text-slate-800">${breakdown.eligibility}/10</b></div>
-                <div>Posting Recency: <b class="text-slate-800">${breakdown.recency}/8</b></div>
-                <div>Completeness: <b class="text-slate-800">${breakdown.completeness}/4</b></div>
-              </div>
-            </details>
-          ` : ''}
-        </div>
-
-        <!-- Action Section: Direct Apply Button + Search Platforms -->
-        <div class="mt-6 pt-4 border-t border-slate-100 space-y-3">
-          <!-- Primary Direct Apply Button -->
-          <a
-            href="${applyUrl}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="w-full py-2.5 px-4 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-black transition-all flex items-center justify-center gap-2 shadow-sm"
-          >
-            <span>Apply Directly on ${item.source}</span>
-            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-
-          <!-- Cross-platform Research Links -->
-          <div>
-            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Research Similar Postings:</span>
-            <div class="grid grid-cols-3 gap-1.5 text-[11px] font-bold text-center">
-              ${urls.linkedIn ? `
-                <a href="${urls.linkedIn}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors flex items-center justify-center gap-1">
-                  <i class="fa-brands fa-linkedin text-xs"></i> LinkedIn
-                </a>
-              ` : ''}
-              ${urls.unstop ? `
-                <a href="${urls.unstop}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
-                  <i class="fa-solid fa-trophy text-xs"></i> Unstop
-                </a>
-              ` : urls.indeed ? `
-                <a href="${urls.indeed}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1">
-                  <i class="fa-solid fa-magnifying-glass text-xs"></i> Indeed
-                </a>
-              ` : ''}
-              ${urls.googleJobs ? `
-                <a href="${urls.googleJobs}" target="_blank" rel="noopener noreferrer" class="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center justify-center gap-1">
-                  <i class="fa-brands fa-google text-xs"></i> Google
-                </a>
-              ` : ''}
             </div>
           </div>
-        </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${otherRelevant.map(renderOpportunityCard).join('')}
+          </div>
+        </section>
+      ` : ''}
 
-      </div>
-    `;
-  }).join('');
+      <!-- Section 3: Needs Confirmation (if any) -->
+      ${needsConfirmation.length > 0 ? `
+        <section class="space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold shadow-2xs">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  Needs Confirmation
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">${needsConfirmation.length}</span>
+                </h3>
+                <p class="text-xs text-slate-500">Roles matching keywords where key details (deadlines, graduation eligibility, or availability) need student confirmation.</p>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${needsConfirmation.map(renderOpportunityCard).join('')}
+          </div>
+        </section>
+      ` : ''}
+    </div>
+  `;
 }
 
 /**
@@ -708,6 +848,12 @@ function renderOpportunitiesAsProducts(opportunities, isFallback = false, meta =
   if (!container) return;
 
   currentAllOpportunities = Array.isArray(opportunities) ? opportunities : [];
+  currentSections = meta.sections || {
+    bestVerified: currentAllOpportunities.filter(o => o.qualityTier === 'bestVerified' || o.verificationStatus === 'Verified'),
+    otherRelevant: currentAllOpportunities.filter(o => o.qualityTier === 'otherRelevant' || (!o.qualityTier && o.verificationStatus === 'Recently discovered')),
+    needsConfirmation: currentAllOpportunities.filter(o => o.qualityTier === 'needsConfirmation' || o.verificationStatus === 'Needs confirmation')
+  };
+  currentQualityNote = meta.qualityNote || null;
   currentSourceStatuses = meta.sourceStatuses || {};
 
   // Render the source status banner
@@ -718,10 +864,22 @@ function renderOpportunitiesAsProducts(opportunities, isFallback = false, meta =
     meta.cachedAt || null
   );
 
-  // Cards grid container
-  container.innerHTML = `<div id="internship-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>`;
+  // Quality threshold banner handling
+  const qualityBanner = document.getElementById('quality-threshold-banner');
+  const qualityText = document.getElementById('quality-threshold-text');
+  if (qualityBanner && qualityText) {
+    if (currentQualityNote) {
+      qualityText.textContent = currentQualityNote;
+      qualityBanner.classList.remove('hidden');
+    } else if (currentSections.bestVerified.length > 0 && currentSections.bestVerified.length <= 3) {
+      qualityText.textContent = `Found ${currentSections.bestVerified.length} verified company matches for your profile. Prioritizing verified accuracy over result quantity.`;
+      qualityBanner.classList.remove('hidden');
+    } else {
+      qualityBanner.classList.add('hidden');
+    }
+  }
 
-  // Apply filters and render cards
+  // Apply filters and render cards in sections
   applyAllOpportunityFilters();
 }
 

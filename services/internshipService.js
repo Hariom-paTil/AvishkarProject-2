@@ -1,7 +1,7 @@
 /**
  * InternshipService
  * High-reliability adapter and pipeline gateway connecting the application
- * to the modular internship search orchestrator.
+ * to the modular deep-research and verification search orchestrator.
  */
 
 const searchOrchestrator = require("../internships/services/searchOrchestrator");
@@ -42,15 +42,14 @@ class InternshipService {
       workAuthorization
     };
 
-    // Execute full pipeline through the search orchestrator
+    // Execute full deep-research pipeline through the search orchestrator
     const searchResult = await searchOrchestrator.search(query, {
       page,
       pageSize,
       forceLive
     });
 
-    // Format opportunities for client rendering with backward compatibility
-    const formattedOpportunities = (searchResult.results || []).map((opp, idx) => {
+    const formatItem = (opp, idx) => {
       const searchUrls = this.generateSearchUrls(opp.title, opp.location || workplace, type);
       const displayDate = formatDisplayDate(opp.postedDate);
 
@@ -87,23 +86,46 @@ class InternshipService {
         completenessScore: opp.completenessScore,
         mergedSources: opp.mergedSources || [opp.source],
         confidence: (opp.score || 85) >= 80 ? "High" : "Medium",
+
+        // Verification metadata
+        verificationStatus: opp.verificationStatus || "Recently discovered",
+        isVerified: Boolean(opp.isVerified),
+        verificationDetails: opp.verificationDetails || [],
+        verifiedAt: opp.verifiedAt || null,
+        qualityTier: opp.qualityTier || "otherRelevant",
+
         searchKeywords: opp.title,
         searchUrls
       };
-    });
+    };
 
-    const sourcesSearched = Object.keys(searchResult.sourceStatuses || {}).join(", ");
+    // Format unified list and specific quality tier sections
+    const formattedOpportunities = (searchResult.results || []).map(formatItem);
+
+    const sections = {
+      bestVerified: (searchResult.sections?.bestVerified || []).map(formatItem),
+      otherRelevant: (searchResult.sections?.otherRelevant || []).map(formatItem),
+      needsConfirmation: (searchResult.sections?.needsConfirmation || []).map(formatItem)
+    };
 
     return {
       type,
       profile: { education, skills, goal, workplace, batch, graduationYear, location },
       searchSummary: searchResult.summary || `Found ${searchResult.totalCount} verified roles.`,
+      qualityNote: searchResult.qualityNote || null,
       opportunitiesCount: searchResult.totalCount,
       totalCount: searchResult.totalCount,
+      counts: searchResult.counts || {
+        total: searchResult.totalCount,
+        bestVerified: sections.bestVerified.length,
+        otherRelevant: sections.otherRelevant.length,
+        needsConfirmation: sections.needsConfirmation.length
+      },
       page: searchResult.page,
       pageSize: searchResult.pageSize,
       totalPages: searchResult.totalPages,
       opportunities: formattedOpportunities,
+      sections,
       sourceStatuses: searchResult.sourceStatuses,
       searchedAt: searchResult.searchedAt,
       searchDurationMs: searchResult.searchDurationMs,

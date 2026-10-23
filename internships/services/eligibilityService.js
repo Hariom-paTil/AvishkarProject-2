@@ -133,7 +133,39 @@ class EligibilityService {
       uncertainties.push("Work authorization requirements are not specified.");
     }
 
-    // 7. Start date check (if available)
+    // 7. Mandatory Skills Check (when requirements are explicit and reliable)
+    const userSkills = (profile.skills || []).map(s => String(s).toLowerCase().trim()).filter(Boolean);
+    const requiredSkills = listing.requiredSkills || [];
+    if (requiredSkills.length >= 2 && userSkills.length > 0) {
+      const hasAnyRequiredSkill = requiredSkills.some(req => {
+        const reqLower = req.toLowerCase();
+        return userSkills.some(us => us === reqLower || reqLower.includes(us) || us.includes(reqLower));
+      });
+      if (!hasAnyRequiredSkill) {
+        return {
+          eligible: false,
+          rejectionReason: `Mandatory skills missing: role requires ${requiredSkills.slice(0, 3).join(", ")}.`,
+          uncertainties,
+          score: 0
+        };
+      }
+    }
+
+    // 8. Explicit Country / Location Conflict Check (when strictly onsite)
+    const userLocation = (profile.location || "").toLowerCase().trim();
+    if (userLocation && listing.workMode === "onsite" && listing.country) {
+      const listingCountry = listing.country.toLowerCase().trim();
+      if (listingCountry && !userLocation.includes(listingCountry) && !listingCountry.includes(userLocation)) {
+        return {
+          eligible: false,
+          rejectionReason: `Location conflict: role requires in-person presence in ${listing.location}.`,
+          uncertainties,
+          score: 0
+        };
+      }
+    }
+
+    // 9. Start date check (if available)
     if (startDate && listing.startDate && listing.startDate !== "Flexible / Not specified") {
       // If listing has strict start date in the past
       const listDate = new Date(listing.startDate);

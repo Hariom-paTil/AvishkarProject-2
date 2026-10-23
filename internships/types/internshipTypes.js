@@ -1,7 +1,7 @@
 /**
  * Internship Types and Standard Schema Definitions
  * Provides standard data contracts for search queries, normalized listings,
- * source adapters, and scoring breakdowns.
+ * source adapters, verification statuses, and scoring breakdowns.
  */
 
 /**
@@ -24,6 +24,18 @@ const SourceStatus = Object.freeze({
   TIMEOUT: "TIMEOUT",
   NOT_CONFIGURED: "NOT_CONFIGURED",
   RATE_LIMITED: "RATE_LIMITED"
+});
+
+/**
+ * Verification Status enum
+ * Verified: Source page and application link were verified active on company/host system.
+ * Recently discovered: Source exists, but active status or full details could not be completely confirmed.
+ * Needs confirmation: Important details (deadline, eligibility, availability) are missing or require confirmation.
+ */
+const VerificationStatus = Object.freeze({
+  VERIFIED: "Verified",
+  RECENTLY_DISCOVERED: "Recently discovered",
+  NEEDS_CONFIRMATION: "Needs confirmation"
 });
 
 /**
@@ -62,6 +74,16 @@ function createNormalizedListing(data = {}) {
     mergedSources: Array.isArray(data.mergedSources) ? data.mergedSources : [data.source || "Unknown"],
     contentHash: data.contentHash || "",
     category: data.category || "Software Engineering",
+
+    // Verification properties
+    verificationStatus: Object.values(VerificationStatus).includes(data.verificationStatus)
+      ? data.verificationStatus
+      : VerificationStatus.RECENTLY_DISCOVERED,
+    isVerified: Boolean(data.isVerified),
+    verificationDetails: Array.isArray(data.verificationDetails) ? data.verificationDetails : [],
+    verifiedAt: data.verifiedAt || null,
+    qualityTier: data.qualityTier || "otherRelevant", // "bestVerified" | "otherRelevant" | "needsConfirmation"
+
     // Score & match enrichment properties
     score: typeof data.score === "number" ? data.score : 0,
     scoreBreakdown: data.scoreBreakdown || null,
@@ -75,5 +97,6 @@ function createNormalizedListing(data = {}) {
 module.exports = {
   WorkMode,
   SourceStatus,
+  VerificationStatus,
   createNormalizedListing
 };

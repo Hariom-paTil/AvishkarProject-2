@@ -2,7 +2,7 @@
   "GreenhouseMock": {
     "source": "GreenhouseMock",
     "status": "SUCCESS",
-    "lastCheckedAt": "2026-10-23T04:58:29.510Z",
+    "lastCheckedAt": "2026-10-23T10:18:00.768Z",
     "durationMs": 45,
     "resultCount": 2,
     "errorMessage": null,
@@ -11,7 +11,7 @@
   "FailingSourceMock": {
     "source": "FailingSourceMock",
     "status": "ERROR",
-    "lastCheckedAt": "2026-10-23T04:58:29.511Z",
+    "lastCheckedAt": "2026-10-23T10:18:00.770Z",
     "durationMs": 0,
     "resultCount": 0,
     "errorMessage": "Simulated upstream network failure",
@@ -20,7 +20,7 @@
   "LinkedIn": {
     "source": "LinkedIn",
     "status": "NOT_CONFIGURED",
-    "lastCheckedAt": "2026-10-23T05:02:31.993Z",
+    "lastCheckedAt": "2026-10-23T10:31:18.803Z",
     "durationMs": 0,
     "resultCount": 0,
     "errorMessage": "Requires approved API access (LinkedIn Official Partner API). Unofficial scraping is strictly disabled.",
@@ -29,7 +29,7 @@
   "Internshala": {
     "source": "Internshala",
     "status": "NOT_CONFIGURED",
-    "lastCheckedAt": "2026-10-23T05:02:31.993Z",
+    "lastCheckedAt": "2026-10-23T10:31:18.804Z",
     "durationMs": 0,
     "resultCount": 0,
     "errorMessage": "Requires approved API access (Internshala Partner API). Unofficial scraping is strictly disabled.",
@@ -38,8 +38,8 @@
   "Remotive": {
     "source": "Remotive",
     "status": "SUCCESS",
-    "lastCheckedAt": "2026-10-23T05:02:32.262Z",
-    "durationMs": 270,
+    "lastCheckedAt": "2026-10-23T10:31:18.942Z",
+    "durationMs": 139,
     "resultCount": 0,
     "errorMessage": null,
     "isConfigured": true
@@ -47,28 +47,28 @@
   "Ashby": {
     "source": "Ashby",
     "status": "PARTIAL",
-    "lastCheckedAt": "2026-10-23T05:02:32.777Z",
-    "durationMs": 789,
-    "resultCount": 0,
+    "lastCheckedAt": "2026-10-23T10:31:19.381Z",
+    "durationMs": 584,
+    "resultCount": 14,
     "errorMessage": "Ashby experienced errors for 1 organizations.",
     "isConfigured": true
   },
   "Greenhouse": {
     "source": "Greenhouse",
     "status": "PARTIAL",
-    "lastCheckedAt": "2026-10-23T05:02:33.286Z",
-    "durationMs": 1348,
-    "resultCount": 13,
+    "lastCheckedAt": "2026-10-23T10:31:20.320Z",
+    "durationMs": 1537,
+    "resultCount": 56,
     "errorMessage": "Greenhouse experienced errors on 1 company boards.",
     "isConfigured": true
   },
   "Lever": {
     "source": "Lever",
-    "status": "PARTIAL",
-    "lastCheckedAt": "2026-10-23T05:02:38.989Z",
-    "durationMs": 7005,
+    "status": "ERROR",
+    "lastCheckedAt": "2026-10-23T10:31:16.802Z",
+    "durationMs": 7008,
     "resultCount": 0,
-    "errorMessage": "Lever experienced errors for 5 companies.",
+    "errorMessage": "Lever experienced errors for 6 companies.",
     "isConfigured": true
   }
 }
